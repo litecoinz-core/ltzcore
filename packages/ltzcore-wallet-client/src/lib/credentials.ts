@@ -204,8 +204,6 @@ export class Credentials {
         coin = '0';
       } else if (this.coin == 'eth') {
         coin = '60';
-      } else if (this.coin == 'xrp') {
-        coin = '144';
       } else {
         throw new Error('unknown coin: ' + this.coin);
       }

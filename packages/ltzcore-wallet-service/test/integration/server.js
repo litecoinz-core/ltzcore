@@ -38,8 +38,7 @@ const TO_SAT = {
   'bch': 1e8,
   'btc': 1e8,
   'eth': 1e18,
-  'usdc': 1e6,
-  'xrp': 1e6
+  'usdc': 1e6
 };
 
 const TOKENS = ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0x056fd409e1d7a124bd7017459dfea2f387b6d5cd'];
@@ -760,7 +759,7 @@ describe('Wallet service', function() {
       });
     });
 
-    ['eth','xrp'].forEach(c => {
+    ['eth'].forEach(c => {
       it(`should  fail to create a multisig ${c}  wallet`, function(done) {
         var opts = {
           coin: c,
@@ -2325,116 +2324,6 @@ describe('Wallet service', function() {
         });
       });
     });
-
-    describe('XRP', function() {
-      var server, wallet;
-
-      describe('BIP44 livenet', function() {
-        beforeEach(function(done) {
-          helpers.createAndJoinWallet(1, 1, { coin: 'xrp' }, function(s, w) {
-            server = s;
-            wallet = w;
-            done();
-          });
-        });
-
-        it('should create address ', function(done) {
-          server.createAddress({}, function(err, address) {
-            should.not.exist(err);
-            should.exist(address);
-            address.walletId.should.equal(wallet.id);
-            address.network.should.equal('livenet');
-            address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-            address.isChange.should.be.false;
-            address.coin.should.equal('xrp');
-            address.path.should.equal('m/0/0');
-            server.getNotifications({}, function(err, notifications) {
-              should.not.exist(err);
-              var notif = _.find(notifications, {
-                type: 'NewAddress'
-              });
-              should.exist(notif);
-              notif.data.address.should.equal(address.address);
-              done();
-            });
-          });
-        });
-
-        it('should not create  new addresses ', function(done) {
-          server.createAddress({}, function(err, address) {
-            should.not.exist(err);
-            address.walletId.should.equal(wallet.id);
-            address.network.should.equal('livenet');
-            address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-            server.createAddress({}, function(err, address) {
-              should.not.exist(err);
-              should.exist(address);
-              address.walletId.should.equal(wallet.id);
-              address.network.should.equal('livenet');
-              address.path.should.equal('m/0/0');
-              address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-              address.isChange.should.be.false;
-              address.coin.should.equal('xrp');
-              done();
-            });
-          });
-        });
-      });
-
-      describe('BIP44 testnet (with storage transformation)', function() {
-        beforeEach(function(done) {
-          helpers.createAndJoinWallet(1, 1, { coin: 'xrp', network: 'testnet' }, function(s, w) {
-            server = s;
-            wallet = w;
-            done();
-          });
-        });
-
-        it('should create  addresses', function(done) {
-          server.createAddress({}, function(err, address) {
-            should.not.exist(err);
-            address.walletId.should.equal(wallet.id);
-            address.path.should.equal('m/0/0');
-            address.network.should.equal('testnet');
-            address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-            server.createAddress({}, function(err, address) {
-              should.not.exist(err);
-              should.exist(address);
-              address.walletId.should.equal(wallet.id);
-              address.network.should.equal('testnet');
-              address.path.should.equal('m/0/0');
-              address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-              address.isChange.should.be.false;
-              address.coin.should.equal('xrp');
-
-              // main addresses should transfrom addresses
-              server.getMainAddresses({}, function(err, addresses) {
-                should.not.exist(err);
-                addresses.length.should.equal(1);
-                addresses[0].address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-                done();
-              });
-            });
-          });
-        });
-
-        it('should sync  addresses with transformed strings', function(done) {
-          server.createAddress({}, function(err, address) {
-            should.not.exist(err);
-            address.walletId.should.equal(wallet.id);
-            address.path.should.equal('m/0/0');
-            address.network.should.equal('testnet');
-            address.address.should.equal('rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG');
-            server.syncWallet(wallet, function(err) {
-              should.not.exist(err);
-              var calls = blockchainExplorer.addAddresses.getCalls();
-              calls[0].args[1].should.deep.equal(['rLsz9LPd3arEWQ6CsvD839E8c9dkdBopUG']);
-              done();
-            });
-          });
-        });
-      });
-    });
   });
 
 
@@ -3725,7 +3614,7 @@ describe('Wallet service', function() {
 
   describe('Network suspended tests', function() {
     it('should fail to create tx when wallet is BCH and suspendedChains includes bch', function(done) {
-      config.suspendedChains = ['bch', 'xrp'];
+      config.suspendedChains = ['bch'];
 
       var server = new WalletService();
       var walletOpts = {
@@ -3796,13 +3685,6 @@ describe('Wallet service', function() {
       addr: '0x37d7B3bBD88EFdE6a93cF74D2F5b0385D3E3B08A',
       lockedFunds: 0,
       flags: { noChange: true, noUtxoTests: true, },
-    }, 
-    {
-      coin: 'xrp',
-      key: 'id44btc',
-      addr: 'rDzTZxa7NwD9vmNf5dvTbW4FQDNSRsfPv6',
-      lockedFunds: Defaults.MIN_XRP_BALANCE,
-      flags: { noChange: true , noUtxoTests: true},
     }
   ];
 
@@ -4523,10 +4405,6 @@ describe('Wallet service', function() {
                 3: 1e9,    // normal ETH
                 4: 1e9     // economy/superEconomy ETH
               }, null, coin);
-            } else if (coin === 'xrp') {
-              helpers.stubFeeLevels({
-                1: 12
-              }, null, coin);
             }
             switch(coin) {
               case 'bch':
@@ -4538,11 +4416,6 @@ describe('Wallet service', function() {
                 level = 'normal';
                 expected = 1e9;
                 expectedNormal = 1e9;
-                break;
-              case 'xrp':
-                level = 'normal';
-                expected = 12;
-                expectedNormal = 12;
                 break;
               default:
                 level = 'economy';
@@ -5429,9 +5302,6 @@ describe('Wallet service', function() {
           Defaults.UTXO_SELECTION_MIN_TX_AMOUNT_VS_UTXO_FACTOR = 0.0001;
           Defaults.MAX_TX_SIZE_IN_KB_BTC = 2;
           Defaults.MAX_TX_SIZE_IN_KB_ETH = 2;
-          Defaults.MAX_TX_SIZE_IN_KB_XRP = 2;
-
-
             helpers.stubUtxos(server, wallet, [100].concat(_.range(1, 20, 0)), function() {
               var txOpts = {
                 outputs: [{
@@ -6804,7 +6674,6 @@ describe('Wallet service', function() {
     it('should not go beyond max tx size', function(done) {
       Defaults.MAX_TX_SIZE_IN_KB_BTC =2;
       Defaults.MAX_TX_SIZE_IN_KB_ETH =2;
-      Defaults.MAX_TX_SIZE_IN_KB_XRP =2;
         helpers.stubUtxos(server, wallet, _.range(1, 10, 0), function() {
           server.getSendMaxInfo({
             feePerKb: 10000,
@@ -9928,57 +9797,6 @@ describe('Wallet service', function() {
       }).catch(err => {
         should.exist(err);
         err.message.should.equal('Error');
-      });
-    });
-
-    it('should call getPayId with a url obtained from the template field if it exists', () => {
-      const fakeRequest2 = {
-        get: (_url, _opts, _cb) => { return _cb(null, { 
-          body: {
-            subject: "payid:matias$ematiu.sandbox.payid.org",
-            links: [{
-                rel: "https://payid.org/ns/payid-easy-checkout-uri/1.0",
-                href: "https://xpring.io/portal/wallet/xrp/testnet/payto",
-                template: "https://ematiu.sandbox.payid.org/payid/{acctpart}"
-              }]
-          } 
-        })}
-      };
-
-      server.request = fakeRequest2;
-      var spy = sinon.spy(server, 'getPayId');
-      const url = 'https://ematiu.sandbox.payid.org/payid/matias';
-      server.discoverPayId(req.body).then(data => {
-        var calls = spy.getCalls();
-        calls[0].args[0].should.equal(url);
-        should.exist(data);
-      }).catch(err => {
-        should.not.exist(err);
-      });
-    });
-
-    it('should call getPayId with a default url if the template field does not exist', () => {
-      const fakeRequest2 = {
-        get: (_url, _opts, _cb) => { return _cb(null, { 
-          body: {
-            subject: "payid:matias$ematiu.sandbox.payid.org",
-            links: [{
-                rel: "https://payid.org/ns/payid-easy-checkout-uri/1.0",
-                href: "https://xpring.io/portal/wallet/xrp/testnet/payto",
-              }]
-          } 
-        })}
-      };
-      const url = 'https://ematiu.sandbox.payid.org/matias';
-      server.request = fakeRequest2;
-      var spy = sinon.spy(server, 'getPayId');
-
-      server.discoverPayId(req.body).then(data => {
-        var calls = spy.getCalls();
-        calls[0].args[0].should.equal(url);
-        should.exist(data);
-      }).catch(err => {
-        should.not.exist(err);
       });
     });
   });

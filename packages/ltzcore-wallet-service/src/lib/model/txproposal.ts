@@ -65,8 +65,6 @@ export interface ITxProposal {
   data?: string; // Backward compatibility for BWC <= 8.9.0
   tokenAddress?: string;
   multisigContractAddress?: string;
-  destinationTag?: string;
-  invoiceID?: string;
   lockUntilBlockHeight?: number;
 }
 
@@ -124,8 +122,6 @@ export class TxProposal {
   tokenAddress?: string;
   multisigContractAddress?: string;
   multisigTxId?: string;
-  destinationTag?: string;
-  invoiceID?: string;
   lockUntilBlockHeight?: number;
 
   static create(opts) {
@@ -200,10 +196,6 @@ export class TxProposal {
     x.tokenAddress = opts.tokenAddress;
     x.multisigContractAddress = opts.multisigContractAddress;
 
-    // XRP
-    x.destinationTag = opts.destinationTag;
-    x.invoiceID = opts.invoiceID;
-
     return x;
   }
 
@@ -262,10 +254,6 @@ export class TxProposal {
     x.tokenAddress = obj.tokenAddress;
     x.multisigContractAddress = obj.multisigContractAddress;
     x.multisigTxId = obj.multisigTxId;
-
-    // XRP
-    x.destinationTag = obj.destinationTag;
-    x.invoiceID = obj.invoiceID;
 
     if (x.status == 'broadcasted') {
       x.raw = obj.raw;

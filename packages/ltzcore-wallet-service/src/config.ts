@@ -57,14 +57,6 @@ module.exports = {
         url: 'https://api-eth.bitcore.io'
       }
     },
-    xrp: {
-      livenet: {
-        url: 'https://api-xrp.bitcore.io'
-      },
-      testnet: {
-        url: 'https://api-xrp.bitcore.io'
-      }
-    },
     socketApiKey: 'socketApiKey'
   },
   pushNotificationsOpts: {

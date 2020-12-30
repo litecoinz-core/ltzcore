@@ -19,8 +19,7 @@ const Ltzcore = LtzcoreLib;
 const Ltzcore_ = {
   btc: Ltzcore,
   bch: LtzcoreLibCash,
-  eth: Ltzcore,
-  xrp: Ltzcore
+  eth: Ltzcore
 };
 const PrivateKey = Ltzcore.PrivateKey;
 const PublicKey = Ltzcore.PublicKey;
@@ -406,7 +405,6 @@ export class Utils {
     } else {
       const {
         data,
-        destinationTag,
         outputs,
         payProUrl,
         tokenAddress,
@@ -436,7 +434,6 @@ export class Utils {
         const rawTx = Transactions.create({
           ...txp,
           ...recipients[index],
-          tag: destinationTag ? Number(destinationTag) : undefined,
           chain,
           nonce: Number(txp.nonce) + Number(index),
           recipients: [recipients[index]]

@@ -20,8 +20,7 @@ var Ltzcore = CWC.LtzcoreLib;
 var Ltzcore_ = {
   btc: CWC.LtzcoreLib,
   bch: CWC.LtzcoreLibCash,
-  eth: CWC.LtzcoreLib,
-  xrp: CWC.LtzcoreLib
+  eth: CWC.LtzcoreLib
 };
 var Mnemonic = require('ltzcore-mnemonic');
 var url = require('url');
@@ -697,7 +696,6 @@ export class API extends EventEmitter {
     const { coin, network } = txp;
     const chain = Utils.getChain(coin);
     switch (chain) {
-      case 'XRP':
       case 'ETH':
         const unsignedTxs = t.uncheckedSerialize();
         const signedTxs = [];
@@ -2851,8 +2849,6 @@ export class API extends EventEmitter {
         ['bch', 'livenet'],
         ['eth', 'livenet'],
         ['eth', 'testnet'],
-        ['xrp', 'livenet'],
-        ['xrp', 'testnet'],
         ['btc', 'livenet', true],
         ['bch', 'livenet', true]
       ];

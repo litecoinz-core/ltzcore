@@ -40,8 +40,7 @@ const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
   btc: Ltzcore,
   bch: require('ltzcore-lib-cash'),
-  eth: Ltzcore,
-  xrp: Ltzcore
+  eth: Ltzcore
 };
 
 const Common = require('./common');
@@ -2300,8 +2299,6 @@ export class WalletService {
                     data: opts.data, // Backward compatibility for BWC < v7.1.1
                     tokenAddress: opts.tokenAddress,
                     multisigContractAddress: opts.multisigContractAddress,
-                    destinationTag: opts.destinationTag,
-                    invoiceID: opts.invoiceID,
                     signingMethod: opts.signingMethod
                   };
                   txp = TxProposal.create(txOpts);
@@ -4152,7 +4149,7 @@ export class WalletService {
   /**
    * Returns exchange rates of the supported fiat currencies for the specified coin.
    * @param {Object} opts
-   * @param {String} opts.coin - The coin requested (btc, bch, eth, xrp).
+   * @param {String} opts.coin - The coin requested (btc, bch, eth).
    * @param {String} [opts.code] - Currency ISO code (e.g: USD, EUR, ARS).
    * @param {Date} [opts.ts] - A timestamp to base the rate on (default Date.now()).
    * @param {String} [opts.provider] - A provider of exchange rates (default 'BitPay').

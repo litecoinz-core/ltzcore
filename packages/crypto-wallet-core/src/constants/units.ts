@@ -32,17 +32,6 @@ export let UNITS = {
       minDecimals: 2
     }
   },
-  xrp: {
-    toSatoshis: 1e6,
-    full: {
-      maxDecimals: 6,
-      minDecimals: 6
-    },
-    short: {
-      maxDecimals: 6,
-      minDecimals: 2
-    }
-  },
   busd: {
     toSatoshis: 1e18,
     full: {

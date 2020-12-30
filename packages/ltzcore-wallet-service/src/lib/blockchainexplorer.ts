@@ -18,10 +18,6 @@ const PROVIDERS = {
     eth: {
       livenet: 'https://api-eth.bitcore.io',
       testnet: 'https://api-eth.bitcore.io'
-    },
-    xrp: {
-      livenet: 'https://api-xrp.bitcore.io',
-      testnet: 'https://api-xrp.bitcore.io'
     }
   }
 };

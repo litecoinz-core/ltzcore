@@ -15,7 +15,7 @@ program
   .option('--name <name>', 'REQUIRED - Wallet Name')
   .option('--path [path]', 'optional - Custom wallet storage path')
   .option('--nonce [nonce]', 'optional - Nonce')
-  .option('--from [from]', 'optional - from account for XRP')
+  .option('--from [from]', 'optional - From')
   .option('--payProUri [payProUri]', 'REQUIRED - payment protocol URI')
   .option('--token, [token]', 'optional - ERC-20 token to pay with')
   .parse(process.argv);
@@ -91,12 +91,8 @@ const main = async () => {
       amount: value >= 0 ? value : outputs[0].amount
     }];
     const feeRate = requiredFeeRate || gasPrice;
-    let invoiceID;
-    if (outputs) {
-      invoiceID = outputs[0].invoiceID;
-    }
     const utxos = await wallet.getUtxosArray();
-    const params = { recipients, feeRate, from, invoiceID, data, value, utxos };
+    const params = { recipients, feeRate, from, data, value, utxos };
     params.nonce = Number(nonce);
     const unsignedTx = await wallet.newTx(params);
     unsignedTransactions

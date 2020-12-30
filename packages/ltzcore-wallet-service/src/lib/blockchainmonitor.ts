@@ -50,8 +50,7 @@ export class BlockchainMonitor {
           this.explorers = {
             btc: {},
             bch: {},
-            eth: {},
-            xrp: {}
+            eth: {}
           };
 
           const coinNetworkPairs = [];

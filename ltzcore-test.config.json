@@ -1,6 +1,6 @@
 {
   "ltzcoreNode": {
-    "modules": ["./bitcoin", "./bitcoin-cash", "./ethereum", "./ripple"],
+    "modules": ["./bitcoin", "./bitcoin-cash", "./ethereum"],
     "services": {
       "api": {
         "wallets": {
@@ -39,17 +39,6 @@
             "host": "parity",
             "protocol": "ws",
             "port": 8546
-          }
-        }
-      },
-      "XRP": {
-        "testnet": {
-          "chainSource": "rpc",
-          "provider": {
-            "host": "rippled",
-            "protocol": "ws",
-            "port": "6006",
-            "dataHost": "rippled"
           }
         }
       }

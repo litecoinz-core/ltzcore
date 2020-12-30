@@ -72,7 +72,7 @@ export class FiatRateService {
 
   _fetch(cb?) {
     cb = cb || function() {};
-    const coins = ['btc', 'bch', 'eth', 'xrp'];
+    const coins = ['btc', 'bch', 'eth'];
     const provider = this.providers[0];
 
     //    async.each(this.providers, (provider, next) => {
@@ -205,7 +205,7 @@ export class FiatRateService {
     // Oldest date in timestamp range in epoch number ex. 24 hours ago
     const now = Date.now() - Defaults.FIAT_RATE_FETCH_INTERVAL * 60 * 1000;
     const ts = _.isNumber(opts.ts) ? opts.ts : now;
-    const coins = ['btc', 'bch', 'eth', 'xrp'];
+    const coins = ['btc', 'bch', 'eth'];
 
     async.map(
       coins,

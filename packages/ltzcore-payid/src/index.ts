@@ -13,8 +13,8 @@ class PayId {
   /**
    * Sign a payId address with the given identityKey
    * @param {string} payId e.g.: "alice.smith$bitpay.com", "bob123$example.com"
-   * @param {string} address BTC, ETH, or XRP address to be signed
-   * @param {string} currency Currency ticker (e.g. "BTC", "ETH", "XRP")
+   * @param {string} address BTC or ETH address to be signed
+   * @param {string} currency Currency ticker (e.g. "BTC", "ETH")
    * @param {string | Buffer} identityKey The private key to be used for signing.
    *      Must be an asynchronous (RSA, EC) key and can have any length.
    *      **If not from ltzcore-lib and is a string, it must be a PEM string**
@@ -41,8 +41,8 @@ class PayId {
    * @param {string} payId e.g.: "alice.smith$bitpay.com", "bob.acosta$example.com"
    * @param {IVerifyPayId | GeneralJWS} params Verifiable address payload.
    *    e.g. {
-   *      address: 'rGpbChk5UvgMSZFYmJzQcbh7DShEBbjcng',
-   *      currency: 'XRPL',
+   *      address: '147SwRQdpCfj5p8PnfsXV2SsVVpVcz3aPq',
+   *      currency: 'BTC',
    *      signature: 'somefancysignature',
    *      protected: 'base64StringGeneratedAtTheSignatureRunTime'
    *    }

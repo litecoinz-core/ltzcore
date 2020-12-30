@@ -12,7 +12,6 @@ describe('PayId', () => {
   let keys;
   let addressBTC;
   let addressETH;
-  let addressXRP;
   const payId = 'test$example.com';
 
   before(() => {
@@ -38,14 +37,6 @@ describe('PayId', () => {
       addressDetailsType: 'CryptoAddressDetails',
       addressDetails: {
         address: '0x6c42f5bafcccdd517750d8c8bdcd9918fd1364ee'
-      }
-    };
-
-    addressXRP = {
-      paymentNetwork: 'XRP',
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'rGpbChk5UvgMSZFYmJzQcbh7DShEBbjcng'
       }
     };
   });
@@ -222,11 +213,6 @@ describe('PayId', () => {
           expect(verified).be.true;
         });
 
-        it('should verify XRP', async () => {
-          const verified = await PayId.verify(payId, signatures.secp256k1.XRP);
-          expect(verified).be.true;
-        });
-
         it('should verify ETH', async () => {
           const verified = await PayId.verify(payId, signatures.secp256k1.ETH);
           expect(verified).be.true;
@@ -241,18 +227,6 @@ describe('PayId', () => {
             signature: signatures.ltzcoreHD.BTC.signatures[0].signature,
             protected: signatures.ltzcoreHD.BTC.signatures[0].protected,
             header: signatures.ltzcoreHD.BTC.signatures[0].header
-          };
-          const verified = await PayId.verify(payId, address);
-          expect(verified).be.true;
-        });
-
-        it('should verify XRP', async () => {
-          const address = {
-            address: addressXRP.addressDetails.address,
-            currency: addressXRP.paymentNetwork,
-            signature: signatures.secp256k1.XRP.signatures[0].signature,
-            protected: signatures.secp256k1.XRP.signatures[0].protected,
-            header: signatures.secp256k1.XRP.signatures[0].header
           };
           const verified = await PayId.verify(payId, address);
           expect(verified).be.true;
@@ -440,10 +414,6 @@ describe('PayId', () => {
     it('should return thumbprint', () => {
       const hex = PayId.getThumbprint(TestSignatures.payIdOrgUtils.ltzcoreHD.BTC.signatures[0].protected);
       hex.should.equal('93b533499a6040c03a0bb1ee80ef1da29483666af56a662698b2a2ecda11d54a');
-    });
-    it('should return base64 thumbprint', () => {
-      const b64 = PayId.getThumbprint(TestSignatures.payIdOrgUtils.secp256k1.XRP.signatures[0].protected, 'base64');
-      b64.should.equal('ZxahBqJcANxKDSwlLcdhFv0l5UXjgk9NXD5l6Y2Bkfg');
     });
   });
 });

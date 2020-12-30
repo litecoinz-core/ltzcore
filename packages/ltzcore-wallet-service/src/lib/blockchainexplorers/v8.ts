@@ -12,8 +12,7 @@ const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
   btc: Ltzcore,
   bch: require('ltzcore-lib-cash'),
-  eth: Ltzcore,
-  xrp: Ltzcore
+  eth: Ltzcore
 };
 const config = require('../../config');
 const Constants = Common.Constants,
