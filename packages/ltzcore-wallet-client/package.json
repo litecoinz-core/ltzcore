@@ -17,12 +17,9 @@
     "BWC"
   ],
   "engine": "node >= 8.0.0",
-  "repository": {
-    "url": "git@github.com:bitpay/ltzcore-wallet-client.git",
-    "type": "git"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-wallet-client",
   "bugs": {
-    "url": "https://github.com/bitpay/ltzcore-wallet-client/issues"
+    "url": "https://github.com/litecoinz-core/ltzcore/issues"
   },
   "dependencies": {
     "ajv": "^6.10.0",

@@ -7,10 +7,7 @@
     "test": "gulp test",
     "pub": "npm  publish"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/bitpay/ltzcore-build"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-build",
   "keywords": [
     "ltzcore"
   ],
@@ -38,9 +35,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bitpay/ltzcore-build/issues"
+    "url": "https://github.com/litecoinz-core/ltzcore/issues"
   },
-  "homepage": "https://github.com/bitpay/ltzcore-build",
+  "homepage": "https://github.com/litecoinz-core/ltzcore",
   "dependencies": {
     "@kollavarsham/gulp-coveralls": "^0.2.2",
     "brfs": "^2.0.1",

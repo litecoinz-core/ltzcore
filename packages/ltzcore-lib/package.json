@@ -27,10 +27,7 @@
     "bip70",
     "multisig"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitpay/ltzcore/tree/master/packages/ltzcore-lib"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-lib",
   "browser": {
     "request": "browser-request"
   },

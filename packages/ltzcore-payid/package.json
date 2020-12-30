@@ -4,6 +4,7 @@
   "description": "Ltzcore library for PayID",
   "author": "BitPay Inc",
   "license": "MIT",
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-payid",
   "main": "ts_build/src/index.js",
   "keywords": [
     "bitcoin",
@@ -47,6 +48,6 @@
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "ltzcore-lib": "^8.23.1"
+    "ltzcore-lib": "8.23.1"
   }
 }

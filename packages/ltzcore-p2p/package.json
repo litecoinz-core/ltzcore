@@ -14,10 +14,7 @@
     "bitcoin",
     "ltzcore"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitpay/ltzcore-p2p.git"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-p2p",
   "dependencies": {
     "ltzcore-lib": "^8.23.1",
     "bloom-filter": "^0.2.0",

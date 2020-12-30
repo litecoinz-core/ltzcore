@@ -1,12 +1,12 @@
 {
-  "name": "@bitpay/insight-previous",
+  "name": "insight",
   "description": "A blockchain explorer for Ltzcore",
   "version": "8.23.1",
-  "repository": "git://github.com/bitpay/ltzcore.git",
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/insight",
   "bugs": {
-    "url": "https://github.com/bitpay/ltzcore/issues"
+    "url": "https://github.com/litecoinz-core/ltzcore/issues"
   },
-  "homepage": "https://github.com/bitpay/ltzcore",
+  "homepage": "https://github.com/litecoinz-core/ltzcore",
   "license": "MIT",
   "private": true,
   "keywords": [

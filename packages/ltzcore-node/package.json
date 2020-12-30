@@ -10,6 +10,7 @@
     "Justin Langston <nitsujlangston@gmail.com>",
     "Micah Riggan <micahriggan@gmail.com>"
   ],
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-node",
   "main": "build/src/server.js",
   "bin": "bin/start",
   "scripts": {

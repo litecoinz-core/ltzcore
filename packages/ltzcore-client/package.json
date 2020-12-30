@@ -6,6 +6,7 @@
   },
   "version": "8.23.1",
   "author": "Justin Langston <nitsujlangston@gmail.com>",
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-client",
   "main": "./ts_build/index.js",
   "types": "./ts_build/index.d.ts",
   "scripts": {

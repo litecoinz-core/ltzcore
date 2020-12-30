@@ -78,10 +78,7 @@
     "bip70",
     "multisig"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/litecoin-project/litecore-lib.git"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-lib-ltc",
   "browser": {
     "request": "browser-request"
   },

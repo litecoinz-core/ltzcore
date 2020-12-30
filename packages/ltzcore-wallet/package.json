@@ -9,12 +9,9 @@
     "multisig",
     "wallet"
   ],
-  "repository": {
-    "url": "git@github.com:bitpay/ltzcore-wallet.git",
-    "type": "git"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-wallet",
   "bugs": {
-    "url": "https://github.com/bitpay/ltzcore-wallet/issues"
+    "url": "https://github.com/litecoinz-core/ltzcore/issues"
   },
   "dependencies": {
     "async": "^2.5.0",

@@ -14,12 +14,9 @@
     "ltzcore",
     "BWS"
   ],
-  "repository": {
-    "url": "git@github.com:bitpay/ltzcore-wallet-service.git",
-    "type": "git"
-  },
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/ltzcore-wallet-service",
   "bugs": {
-    "url": "https://github.com/bitpay/ltzcore-wallet-service/issues"
+    "url": "https://github.com/litecoinz-core/ltzcore/issues"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

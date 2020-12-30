@@ -2,6 +2,7 @@
   "name": "crypto-wallet-core",
   "version": "8.23.1",
   "description": "A multi-currency support library for address derivation, private key creation, and transaction creation",
+  "repository": "git://github.com/litecoinz-core/ltzcore/tree/master/packages/crypto-wallet-core",
   "main": "./ts_build/src/index.js",
   "types": "./ts_build/src/index.d.ts",
   "scripts": {
