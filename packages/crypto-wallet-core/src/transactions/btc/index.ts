@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Key } from '../../derivation';
 
 export class BTCTxProvider {
-  lib = require('bitcore-lib');
+  lib = require('ltzcore-lib');
 
   selectCoins(
     recipients: Array<{ amount: number }>,
@@ -67,22 +67,22 @@ export class BTCTxProvider {
   }
 
   getHash(params: { tx: string }) {
-    const bitcoreTx = new this.lib.Transaction(params.tx);
-    return bitcoreTx.hash;
+    const ltzcoreTx = new this.lib.Transaction(params.tx);
+    return ltzcoreTx.hash;
   }
 
   sign(params: { tx: string; keys: Array<Key>; utxos: any[]; pubkeys?: any[]; threshold?: number; opts: any }) {
     const { tx, keys, pubkeys, threshold, opts } = params;
     let utxos = params.utxos || [];
     let inputAddresses = this.getSigningAddresses({ tx, utxos });
-    let bitcoreTx = new this.lib.Transaction(tx);
+    let ltzcoreTx = new this.lib.Transaction(tx);
     let applicableUtxos = this.getRelatedUtxos({
-      outputs: bitcoreTx.inputs,
+      outputs: ltzcoreTx.inputs,
       utxos
     });
-    bitcoreTx.associateInputs(applicableUtxos, pubkeys, threshold, opts);
+    ltzcoreTx.associateInputs(applicableUtxos, pubkeys, threshold, opts);
     const privKeys = _.uniq(keys.map(key => key.privKey.toString()));
-    const signedTx = bitcoreTx.sign(privKeys).toString();
+    const signedTx = ltzcoreTx.sign(privKeys).toString();
     return signedTx;
   }
 
@@ -107,9 +107,9 @@ export class BTCTxProvider {
   }
 
   getSigningAddresses({ tx, utxos }): string[] {
-    let bitcoreTx = new this.lib.Transaction(tx);
+    let ltzcoreTx = new this.lib.Transaction(tx);
     let applicableUtxos = this.getRelatedUtxos({
-      outputs: bitcoreTx.inputs,
+      outputs: ltzcoreTx.inputs,
       utxos
     });
     return applicableUtxos.map(utxo => utxo.address);

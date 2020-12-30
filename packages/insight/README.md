@@ -1,13 +1,13 @@
 # Insight
 
-**A blockchain explorer for Bitcore.**
+**A blockchain explorer for Ltzcore.**
 
 ## Quick Start
 
-To get started, first [start a `bitcore` node](../bitcore-node/readme.md), then run insight:
+To get started, first [start a `ltzcore` node](../ltzcore-node/readme.md), then run insight:
 
 ```sh
-cd bitcore
+cd ltzcore
 npm run insight
 ```
 
