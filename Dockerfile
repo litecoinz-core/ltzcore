@@ -68,9 +68,6 @@ COPY  ./packages/insight/package-lock.json ./packages/insight/package-lock.json
 COPY  ./packages/crypto-wallet-core/package.json ./packages/crypto-wallet-core/package.json
 COPY  ./packages/crypto-wallet-core/package-lock.json ./packages/crypto-wallet-core/package-lock.json
 
-COPY  ./packages/ltzcore-lib-ltc/package.json ./packages/ltzcore-lib-ltc/package.json
-COPY  ./packages/ltzcore-lib-ltc/package-lock.json ./packages/ltzcore-lib-ltc/package-lock.json
-
 
 RUN npm install
 RUN npm run bootstrap

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MODULES='ltzcore-build ltzcore-lib ltzcore-lib-cash ltzcore-mnemonic  crypto-wallet-core ltzcore-wallet-service ltzcore-wallet-client ltzcore-client ltzcore-lib-ltc'
+MODULES='ltzcore-build ltzcore-lib ltzcore-lib-cash ltzcore-mnemonic  crypto-wallet-core ltzcore-wallet-service ltzcore-wallet-client ltzcore-client'
 
 
 for i in $MODULES; 

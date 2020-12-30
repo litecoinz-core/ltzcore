@@ -40,8 +40,6 @@
     "ci:ltzcore-lib": "./ci.sh 'npm run test:ltzcore-lib'",
     "test:ltzcore-lib-cash": "cd ./packages/ltzcore-lib-cash && npm run test",
     "ci:ltzcore-lib-cash": "./ci.sh 'npm run test:ltzcore-lib-cash'",
-    "test:ltzcore-lib-ltc": "cd ./packages/ltzcore-lib-ltc && npm run test",
-    "ci:ltzcore-lib-ltc": "./ci.sh 'npm run test:ltzcore-lib-ltc'",
     "test:ltzcore-p2p": "cd ./packages/ltzcore-p2p && npm run test",
     "ci:ltzcore-p2p": "./ci.sh 'npm run test:ltzcore-p2p'",
     "test:ltzcore-p2p-cash": "cd ./packages/ltzcore-p2p-cash && npm run test",
