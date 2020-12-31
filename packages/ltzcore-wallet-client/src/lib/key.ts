@@ -391,8 +391,6 @@ export class Key {
       }
     } else if (opts.coin == 'btc') {
       coinCode = '0';
-    } else if (opts.coin == 'eth') {
-      coinCode = '60';
     } else {
       throw new Error('unknown coin: ' + opts.coin);
     }

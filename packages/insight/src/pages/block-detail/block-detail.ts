@@ -60,9 +60,6 @@ export class BlockDetailPage {
         ) {
           block = this.blocksProvider.toUtxoCoinAppBlock(response);
         }
-        if (this.chainNetwork.chain === 'ETH') {
-          block = this.blocksProvider.toEthAppBlock(response);
-        }
         this.block = block;
         this.txProvider
           .getConfirmations(this.block.height, this.chainNetwork)

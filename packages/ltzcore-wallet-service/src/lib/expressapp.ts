@@ -389,8 +389,6 @@ export class ExpressApp {
           includeExtendedInfo: false,
           twoStep: false,
           includeServerMessages: false,
-          tokenAddress: req.query.tokenAddress,
-          multisigContractAddress: req.query.multisigContractAddress,
           network: req.query.network
         };
         if (req.query.includeExtendedInfo == '1') opts.includeExtendedInfo = true;
@@ -718,11 +716,9 @@ export class ExpressApp {
 
     router.get('/v1/balance/', (req, res) => {
       getServerWithAuth(req, res, server => {
-        const opts: { coin?: string; twoStep?: boolean; tokenAddress?: string; multisigContractAddress?: string } = {};
+        const opts: { coin?: string; twoStep?: boolean } = {};
         if (req.query.coin) opts.coin = req.query.coin;
         if (req.query.twoStep == '1') opts.twoStep = true;
-        if (req.query.tokenAddress) opts.tokenAddress = req.query.tokenAddress;
-        if (req.query.multisigContractAddress) opts.multisigContractAddress = req.query.multisigContractAddress;
 
         server.getBalance(opts, (err, balance) => {
           if (err) return returnError(err, res, req);
@@ -784,39 +780,6 @@ export class ExpressApp {
       server.getFeeLevels(opts, (err, feeLevels) => {
         if (err) return returnError(err, res, req);
         res.json(feeLevels);
-      });
-    });
-
-    router.post('/v3/estimateGas/', (req, res) => {
-      getServerWithAuth(req, res, async server => {
-        try {
-          const gasLimit = await server.estimateGas(req.body);
-          res.json(gasLimit);
-        } catch (err) {
-          returnError(err, res, req);
-        }
-      });
-    });
-
-    router.post('/v1/ethmultisig/', (req, res) => {
-      getServerWithAuth(req, res, async server => {
-        try {
-          const multisigContractInstantiationInfo = await server.getMultisigContractInstantiationInfo(req.body);
-          res.json(multisigContractInstantiationInfo);
-        } catch (err) {
-          returnError(err, res, req);
-        }
-      });
-    });
-
-    router.post('/v1/ethmultisig/info', (req, res) => {
-      getServerWithAuth(req, res, async server => {
-        try {
-          const multisigContractInfo = await server.getMultisigContractInfo(req.body);
-          res.json(multisigContractInfo);
-        } catch (err) {
-          returnError(err, res, req);
-        }
       });
     });
 
@@ -993,13 +956,9 @@ export class ExpressApp {
           skip?: number;
           limit?: number;
           includeExtendedInfo?: boolean;
-          tokenAddress?: string;
-          multisigContractAddress?: string;
         } = {};
         if (req.query.skip) opts.skip = +req.query.skip;
         if (req.query.limit) opts.limit = +req.query.limit;
-        if (req.query.tokenAddress) opts.tokenAddress = req.query.tokenAddress;
-        if (req.query.multisigContractAddress) opts.multisigContractAddress = req.query.multisigContractAddress;
         if (req.query.includeExtendedInfo == '1') opts.includeExtendedInfo = true;
 
         server.getTxHistory(opts, (err, txs) => {

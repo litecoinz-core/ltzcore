@@ -1,5 +1,4 @@
 export const payloadBTC = '{"payId":"test$example.com","payIdAddress":{"paymentNetwork":"BTC","addressDetailsType":"CryptoAddressDetails","addressDetails":{"address":"mhjPjyyFgdMQwyhf2CnzEqfLS3LdAqkvkF"}}}';
-export const payloadETH = '{"payId":"test$example.com","payIdAddress":{"paymentNetwork":"ETH","addressDetailsType":"CryptoAddressDetails","addressDetails":{"address":"0x6c42f5bafcccdd517750d8c8bdcd9918fd1364ee"}}}';
 
   // Note that these are different than this lib b/c the PayId.org utils order the jwk differently, causing the sig to be different
 export const payIdOrgUtils = {
@@ -33,15 +32,6 @@ export const payIdOrgUtils = {
           protected: 'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiJ6R1lpTk1jQ2tvOG1henVibGRZNHhqOVc5T3JEaGpJakZiOEYtMlhjT2RBIiwieSI6ImI0SDU4STBjcnlQUnoxT0ZhdVBzTU9STTJ0cFQxcXNiVy1YRUpfZ3pGMDAiLCJrdHkiOiJFQyIsImtpZCI6Ilp4YWhCcUpjQU54S0RTd2xMY2RoRnYwbDVVWGpnazlOWEQ1bDZZMkJrZmcifX0',
           signature: 'q43YPN75Lt4Li9DKdoE5UkANA6NE-D1H9nUaHw-i08kNY4caUq_63WnM46VbcNLjZkYXdZltdMf4tmP1hRAYtg',
 
-        }
-      ]
-    },
-    ETH: {
-      payload: payloadETH,
-      signatures: [
-        {
-          protected: 'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiJ6R1lpTk1jQ2tvOG1henVibGRZNHhqOVc5T3JEaGpJakZiOEYtMlhjT2RBIiwieSI6ImI0SDU4STBjcnlQUnoxT0ZhdVBzTU9STTJ0cFQxcXNiVy1YRUpfZ3pGMDAiLCJrdHkiOiJFQyIsImtpZCI6Ilp4YWhCcUpjQU54S0RTd2xMY2RoRnYwbDVVWGpnazlOWEQ1bDZZMkJrZmcifX0',
-          signature: 'Xa3Tex57l7TIw7aaYLOAsjszemY3cNc2HAUuB9ng9ps9K32Pg2_C7NNMadPVPBoBqbHS_LHuM_QLMxfFmtFRYA'
         }
       ]
     }

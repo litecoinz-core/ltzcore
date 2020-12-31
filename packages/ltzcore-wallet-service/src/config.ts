@@ -49,14 +49,6 @@ module.exports = {
         url: 'https://api.bitcore.io'
       }
     },
-    eth: {
-      livenet: {
-        url: 'https://api-eth.bitcore.io'
-      },
-      testnet: {
-        url: 'https://api-eth.bitcore.io'
-      }
-    },
     socketApiKey: 'socketApiKey'
   },
   pushNotificationsOpts: {

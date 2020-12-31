@@ -29,9 +29,6 @@ export class PriceProvider {
         case 'BCH':
           ratesAPI = this.api.ratesAPI.bch;
           break;
-        case 'ETH':
-          ratesAPI = this.api.ratesAPI.eth;
-          break;
       }
       this.api.httpClient.get(ratesAPI).subscribe(
         (data: any) => {

@@ -4,19 +4,7 @@ import * as CWC from 'crypto-wallet-core';
 module.exports = {
   COINS: {
     BTC: 'btc',
-    BCH: 'bch',
-    ETH: 'eth',
-    USDC: 'usdc',
-    PAX: 'pax',
-    GUSD: 'gusd',
-    BUSD: 'busd'
-  },
-
-  ERC20: {
-    USDC: 'usdc',
-    PAX: 'pax',
-    GUSD: 'gusd',
-    BUSD: 'busd'
+    BCH: 'bch'
   },
 
   UTXO_COINS: {
@@ -50,6 +38,4 @@ module.exports = {
   },
 
   BIP45_SHARED_INDEX: 0x80000000 - 1,
-
-  TOKEN_OPTS: CWC.Constants.TOKEN_OPTS
 };

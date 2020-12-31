@@ -12,7 +12,7 @@ class Signer {
   constructor() {}
 
   /**
-   * Signs BTC and ETH addresses in PayId compatible format using EC (secp256k1), EdDSA (Ed25519), or RSA keys.
+   * Signs BTC address in PayId compatible format using EC (secp256k1), EdDSA (Ed25519), or RSA keys.
    * @param payload Payload to sign.
    * @param jwk JSON Web Key to use for signing.
    * @param alg (optional) Signing algorithm to use.

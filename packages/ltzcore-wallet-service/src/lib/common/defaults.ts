@@ -55,33 +55,6 @@ module.exports = {
         multiplier: 1.05, // To fix fees < 1sat/byte
         defaultValue: 2000
       }
-    ],
-    eth: [
-      {
-        name: 'urgent',
-        nbBlocks: 1,
-        defaultValue: 10000000000
-      },
-      {
-        name: 'priority',
-        nbBlocks: 2,
-        defaultValue: 5000000000
-      },
-      {
-        name: 'normal',
-        nbBlocks: 3,
-        defaultValue: 1000000000
-      },
-      {
-        name: 'economy',
-        nbBlocks: 4,
-        defaultValue: 1000000000
-      },
-      {
-        name: 'superEconomy',
-        nbBlocks: 4,
-        defaultValue: 1000000000
-      }
     ]
   },
 
@@ -187,27 +160,18 @@ module.exports = {
 
   MAX_TX_SIZE_IN_KB_BCH: 100,
 
-  // MAX_TX_SIZE_IN_KB_ETH: 500, // not used
-
   MAX_FEE_PER_KB: {
     btc: 10000 * 1000, // 10k sat/b
-    bch: 10000 * 1000, // 10k sat/b
-    eth: 1000000000000 // 50 Gwei,
+    bch: 10000 * 1000  // 10k sat/b
   },
 
   MIN_TX_FEE: {
     btc: 0,
-    bch: 0,
-    eth: 0
+    bch: 0
   },
 
   MAX_TX_FEE: {
     btc: 0.05 * 1e8,
-    bch: 0.05 * 1e8,
-    eth: 1 * 1e18 // 1 eth
+    bch: 0.05 * 1e8
   },
-
-  // ETH
-  DEFAULT_GAS_LIMIT: 200000,
-  MIN_GAS_LIMIT: 21000,
 };

@@ -45,15 +45,9 @@ export class CoinListComponent implements OnInit {
         .getAddressActivity(this.addrStr, this.chainNetwork)
         .subscribe(
           data => {
-            const toAppCoin: any =
-              this.chainNetwork.chain !== 'ETH'
-                ? this.txsProvider.toAppCoin
-                : this.txsProvider.toAppEthCoin;
+            const toAppCoin: any = this.txsProvider.toAppCoin;
             const formattedData = data.map(toAppCoin);
-            this.txs =
-              this.chainNetwork.chain !== 'ETH'
-                ? this.processData(formattedData)
-                : formattedData;
+            this.txs = this.processData(formattedData);
             this.txs = _.sortBy(this.txs, ['height']).reverse(); // newest txs by default
             this.events.publish('CoinList', { length: this.txs.length });
             this.showTransactions = true;

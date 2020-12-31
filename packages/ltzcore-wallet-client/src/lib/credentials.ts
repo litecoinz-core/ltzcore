@@ -42,9 +42,7 @@ export class Credentials {
     'use145forBCH', // Obsolete
     'version',
     'rootPath', // this is only for information
-    'keyId', // this is only for information
-    'token', // this is for a ERC20 token
-    'multisigEthInfo' // this is for a MULTISIG eth wallet
+    'keyId' // this is only for information
   ];
   version: number;
   account: number;
@@ -66,8 +64,6 @@ export class Credentials {
 
   addressType: string;
   keyId: string;
-  token?: string;
-  multisigEthInfo?: any;
   externalSource?: boolean; // deprecated property?
 
   constructor() {
@@ -137,41 +133,6 @@ export class Credentials {
     return x;
   }
 
-  /*
-   * creates an ERC20 wallet from a ETH wallet
-   */
-  getTokenCredentials(token: {
-    name: string;
-    symbol: string;
-    address: string;
-  }) {
-    const ret = _.cloneDeep(this);
-    ret.walletId = `${ret.walletId}-${token.address}`;
-    ret.coin = token.symbol.toLowerCase();
-    ret.walletName = token.name;
-    ret.token = token;
-
-    return ret;
-  }
-
-  /*
-   * creates a Multisig wallet from a ETH wallet
-   */
-  getMultisigEthCredentials(multisigEthInfo: {
-    multisigContractAddress: string;
-    walletName: string;
-    n: string;
-    m: string;
-  }) {
-    const ret = _.cloneDeep(this);
-    ret.walletId = `${ret.walletId}-${multisigEthInfo.multisigContractAddress}`;
-    ret.walletName = multisigEthInfo.walletName;
-    ret.n = multisigEthInfo.n;
-    ret.m = multisigEthInfo.m;
-    ret.multisigEthInfo = multisigEthInfo;
-    return ret;
-  }
-
   getRootPath() {
     // This is for OLD v1.0 credentials only.
     var legacyRootPath = () => {
@@ -202,8 +163,6 @@ export class Credentials {
         }
       } else if (this.coin == 'btc') {
         coin = '0';
-      } else if (this.coin == 'eth') {
-        coin = '60';
       } else {
         throw new Error('unknown coin: ' + this.coin);
       }

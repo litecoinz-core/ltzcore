@@ -19,8 +19,7 @@ var events = require('events');
 var Ltzcore = CWC.LtzcoreLib;
 var Ltzcore_ = {
   btc: CWC.LtzcoreLib,
-  bch: CWC.LtzcoreLibCash,
-  eth: CWC.LtzcoreLib
+  bch: CWC.LtzcoreLibCash
 };
 var Mnemonic = require('ltzcore-mnemonic');
 var url = require('url');
@@ -463,9 +462,6 @@ export class API extends EventEmitter {
     if (!_.includes(Constants.COINS, coin))
       return cb(new Error('Invalid coin'));
 
-    if (coin == 'eth')
-      return cb(new Error('ETH not supported for this action'));
-
     var B = Ltzcore_[coin];
     var privateKey = B.PrivateKey(privateKey);
     var address = privateKey.publicKey.toAddress().toString(true);
@@ -695,27 +691,7 @@ export class API extends EventEmitter {
   _addSignaturesToLtzcoreTx(txp, t, signatures, xpub) {
     const { coin, network } = txp;
     const chain = Utils.getChain(coin);
-    switch (chain) {
-      case 'ETH':
-        const unsignedTxs = t.uncheckedSerialize();
-        const signedTxs = [];
-        for (let index = 0; index < signatures.length; index++) {
-          const signed = CWC.Transactions.applySignature({
-            chain,
-            tx: unsignedTxs[index],
-            signature: signatures[index]
-          });
-          signedTxs.push(signed);
-
-          // ltzcore users id for txid...
-          t.id = CWC.Transactions.getHash({ tx: signed, chain, network });
-        }
-        t.uncheckedSerialize = () => signedTxs;
-        t.serialize = () => signedTxs;
-        break;
-      default:
-        return this._addSignaturesToLtzcoreTxBitcoin(txp, t, signatures, xpub);
-    }
+    return this._addSignaturesToLtzcoreTxBitcoin(txp, t, signatures, xpub);
   }
 
   _applyAllSignatures(txp, t) {
@@ -1212,8 +1188,6 @@ export class API extends EventEmitter {
   // *
   // * @param {Boolean} opts.twoStep[=false] - Optional: use 2-step balance computation for improved performance
   // * @param {Boolean} opts.includeExtendedInfo (optional: query extended status)
-  // * @param {String} opts.tokenAddress (optional: ERC20 Token Contract Address)
-  // * @param {String} opts.multisigContractAddress (optional: MULTISIG ETH Contract Address)
   // * @returns {Callback} cb - Returns error or an object with status information
   // */
   getStatus(opts, cb) {
@@ -1234,15 +1208,6 @@ export class API extends EventEmitter {
     qs.push('includeExtendedInfo=' + (opts.includeExtendedInfo ? '1' : '0'));
     qs.push('twoStep=' + (opts.twoStep ? '1' : '0'));
     qs.push('serverMessageArray=1');
-
-    if (opts.tokenAddress) {
-      qs.push('tokenAddress=' + opts.tokenAddress);
-    }
-
-    if (opts.multisigContractAddress) {
-      qs.push('multisigContractAddress=' + opts.multisigContractAddress);
-      qs.push('network=' + this.credentials.network);
-    }
 
     this.request.get('/v3/wallets/?' + qs.join('&'), (err, result) => {
       if (err) return cb(err);
@@ -1564,8 +1529,6 @@ export class API extends EventEmitter {
   // * Update wallet balance
   // *
   // * @param {String} opts.coin - Optional: defaults to current wallet coin
-  // * @param {String} opts.tokenAddress - Optional: ERC20 token contract address
-  // * @param {String} opts.multisigContractAddress optional: MULTISIG ETH Contract Address
   // * @param {Callback} cb
   // */
   getBalance(opts, cb) {
@@ -1588,12 +1551,7 @@ export class API extends EventEmitter {
         return cb(new Error('Invalid coin'));
       args.push('coin=' + opts.coin);
     }
-    if (opts.tokenAddress) {
-      args.push('tokenAddress=' + opts.tokenAddress);
-    }
-    if (opts.multisigContractAddress) {
-      args.push('multisigContractAddress=' + opts.multisigContractAddress);
-    }
+
     var qs = '';
     if (args.length > 0) {
       qs = '?' + args.join('&');
@@ -2160,8 +2118,6 @@ export class API extends EventEmitter {
   // * @param {Object} opts
   // * @param {Number} opts.skip (defaults to 0)
   // * @param {Number} opts.limit
-  // * @param {String} opts.tokenAddress
-  // * @param {String} opts.multisigContractAddress (optional: MULTISIG ETH Contract Address)
   // * @param {Boolean} opts.includeExtendedInfo
   // * @param {Callback} cb
   // * @return {Callback} cb - Return error or array of transactions
@@ -2176,9 +2132,6 @@ export class API extends EventEmitter {
     if (opts) {
       if (opts.skip) args.push('skip=' + opts.skip);
       if (opts.limit) args.push('limit=' + opts.limit);
-      if (opts.tokenAddress) args.push('tokenAddress=' + opts.tokenAddress);
-      if (opts.multisigContractAddress)
-        args.push('multisigContractAddress=' + opts.multisigContractAddress);
       if (opts.includeExtendedInfo) args.push('includeExtendedInfo=1');
     }
     var qs = '';
@@ -2469,48 +2422,6 @@ export class API extends EventEmitter {
   }
 
   // /**
-  // * Returns gas limit estimate.
-  // * @param {Object} opts - tx Object
-  // * @return {Callback} cb - Return error (if exists) and gas limit
-  // */
-  getEstimateGas(opts, cb) {
-    var url = '/v3/estimateGas/';
-    this.request.post(url, opts, (err, gasLimit) => {
-      if (err) return cb(err);
-      return cb(null, gasLimit);
-    });
-  }
-
-  // /**
-  // * Returns contract instantiation info. (All contract addresses instantiated by that sender with the current transaction hash and block number)
-  // * @param {string} opts.sender - sender eth wallet address
-  // * @param {string} opts.txId - instantiation transaction id
-  // * @return {Callback} cb - Return error (if exists) instantiation info
-  // */
-  getMultisigContractInstantiationInfo(opts, cb) {
-    var url = '/v1/ethmultisig/';
-    opts.network = this.credentials.network;
-    this.request.post(url, opts, (err, contractInstantiationInfo) => {
-      if (err) return cb(err);
-      return cb(null, contractInstantiationInfo);
-    });
-  }
-
-  // /**
-  // * Returns contract info. (owners addresses and required number of confirmations)
-  // * @param {string} opts.multisigContractAddress - multisig contract address
-  // * @return {Callback} cb - Return error (if exists) instantiation info
-  // */
-  getMultisigContractInfo(opts, cb) {
-    var url = '/v1/ethmultisig/info';
-    opts.network = this.credentials.network;
-    this.request.post(url, opts, (err, contractInfo) => {
-      if (err) return cb(err);
-      return cb(null, contractInfo);
-    });
-  }
-
-  // /**
   // * Get wallet status based on a string identifier (one of: walletId, address, txid)
   // *
   // * @param {string} opts.identifier - The identifier
@@ -2774,61 +2685,6 @@ export class API extends EventEmitter {
                 : Constants.SCRIPT_TYPES.P2WSH;
           }
           let clients = [client];
-          // Eth wallet with tokens?
-          const tokenAddresses = status.preferences.tokenAddresses;
-          if (!_.isEmpty(tokenAddresses)) {
-            _.each(tokenAddresses, t => {
-              const token = Constants.TOKEN_OPTS[t];
-              if (!token) {
-                log.warn(`Token ${t} unknown`);
-                return;
-              }
-              log.info(`Importing token: ${token.name}`);
-              const tokenCredentials = client.credentials.getTokenCredentials(
-                token
-              );
-              let tokenClient = _.cloneDeep(client);
-              tokenClient.credentials = tokenCredentials;
-              clients.push(tokenClient);
-            });
-          }
-          // Eth wallet with mulsig wallets?
-          const multisigEthInfo = status.preferences.multisigEthInfo;
-          if (!_.isEmpty(multisigEthInfo)) {
-            _.each(multisigEthInfo, info => {
-              log.info(
-                `Importing multisig wallet. Address: ${info.multisigContractAddress} - m: ${info.m} - n: ${info.n}`
-              );
-              const multisigEthCredentials = client.credentials.getMultisigEthCredentials(
-                {
-                  walletName: info.walletName,
-                  multisigContractAddress: info.multisigContractAddress,
-                  n: info.n,
-                  m: info.m
-                }
-              );
-              let multisigEthClient = _.cloneDeep(client);
-              multisigEthClient.credentials = multisigEthCredentials;
-              clients.push(multisigEthClient);
-              const tokenAddresses = info.tokenAddresses;
-              if (!_.isEmpty(tokenAddresses)) {
-                _.each(tokenAddresses, t => {
-                  const token = Constants.TOKEN_OPTS[t];
-                  if (!token) {
-                    log.warn(`Token ${t} unknown`);
-                    return;
-                  }
-                  log.info(`Importing multisig token: ${token.name}`);
-                  const tokenCredentials = multisigEthClient.credentials.getTokenCredentials(
-                    token
-                  );
-                  let tokenClient = _.cloneDeep(multisigEthClient);
-                  tokenClient.credentials = tokenCredentials;
-                  clients.push(tokenClient);
-                });
-              }
-            });
-          }
           return icb(null, clients);
         }
         if (
@@ -2847,8 +2703,6 @@ export class API extends EventEmitter {
         // coin, network,  multisig
         ['btc', 'livenet'],
         ['bch', 'livenet'],
-        ['eth', 'livenet'],
-        ['eth', 'testnet'],
         ['btc', 'livenet', true],
         ['bch', 'livenet', true]
       ];

@@ -309,15 +309,7 @@ Utils.COIN = {
     toSatoshis: 100000000,
     maxDecimals: 8,
     minDecimals: 8,
-  },
-  eth: {
-    name: 'eth',
-    toSatoshis: 1e18,
-    maxDecimals: 8,
-    minDecimals: 8,
-  },
- 
- 
+  }
 };
 
 Utils.renderAmount = function(satoshis, coin, opts) {

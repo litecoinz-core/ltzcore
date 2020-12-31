@@ -18,8 +18,7 @@ const Stringify = require('json-stable-stringify');
 const Ltzcore = LtzcoreLib;
 const Ltzcore_ = {
   btc: Ltzcore,
-  bch: LtzcoreLibCash,
-  eth: Ltzcore
+  bch: LtzcoreLibCash
 };
 const PrivateKey = Ltzcore.PrivateKey;
 const PublicKey = Ltzcore.PublicKey;
@@ -31,11 +30,7 @@ const MAX_DECIMAL_ANY_COIN = 18; // more that 14 gives rounding errors
 
 export class Utils {
   static getChain(coin: string): string {
-    let normalizedChain = coin.toUpperCase();
-    if (Constants.ERC20.includes(coin)) {
-      normalizedChain = 'ETH';
-    }
-    return normalizedChain;
+    return coin.toUpperCase();
   }
 
   static encryptMessage(message, encryptingKey) {
@@ -263,7 +258,6 @@ export class Utils {
     var clipDecimals = (number, decimals) => {
       let str = number.toString();
       if (str.indexOf('e') >= 0) {
-        // fixes eth small balances
         str = number.toFixed(MAX_DECIMAL_ANY_COIN);
       }
       var x = str.split('.');
@@ -307,140 +301,99 @@ export class Utils {
   static buildTx(txp) {
     var coin = txp.coin || 'btc';
 
-    if (Constants.UTXO_COINS.includes(coin)) {
-      var ltzcore = Ltzcore_[coin];
+    var ltzcore = Ltzcore_[coin];
 
-      var t = new ltzcore.Transaction();
+    var t = new ltzcore.Transaction();
 
-      if (txp.version >= 4) {
-        t.setVersion(2);
-      } else {
-        t.setVersion(1);
-      }
-
-      $.checkState(
-        _.includes(_.values(Constants.SCRIPT_TYPES), txp.addressType),
-        'Failed state: addressType not in SCRIPT_TYPES'
-      );
-
-      switch (txp.addressType) {
-        case Constants.SCRIPT_TYPES.P2WSH:
-        case Constants.SCRIPT_TYPES.P2SH:
-          _.each(txp.inputs, i => {
-            t.from(i, i.publicKeys, txp.requiredSignatures);
-          });
-          break;
-        case Constants.SCRIPT_TYPES.P2WPKH:
-        case Constants.SCRIPT_TYPES.P2PKH:
-          t.from(txp.inputs);
-          break;
-      }
-
-      if (txp.toAddress && txp.amount && !txp.outputs) {
-        t.to(txp.toAddress, txp.amount);
-      } else if (txp.outputs) {
-        _.each(txp.outputs, o => {
-          $.checkState(
-            o.script || o.toAddress,
-            'Output should have either toAddress or script specified'
-          );
-          if (o.script) {
-            t.addOutput(
-              new ltzcore.Transaction.Output({
-                script: o.script,
-                satoshis: o.amount
-              })
-            );
-          } else {
-            t.to(o.toAddress, o.amount);
-          }
-        });
-      }
-
-      t.fee(txp.fee);
-      t.change(txp.changeAddress.address);
-
-      // Shuffle outputs for improved privacy
-      if (t.outputs.length > 1) {
-        var outputOrder = _.reject(txp.outputOrder, order => {
-          return order >= t.outputs.length;
-        });
-        $.checkState(
-          t.outputs.length == outputOrder.length,
-          'Failed state: t.ouputs.length == outputOrder.length at buildTx()'
-        );
-        t.sortOutputs(outputs => {
-          return _.map(outputOrder, i => {
-            return outputs[i];
-          });
-        });
-      }
-
-      // Validate inputs vs outputs independently of Ltzcore
-      var totalInputs = _.reduce(
-        txp.inputs,
-        (memo, i) => {
-          return +i.satoshis + memo;
-        },
-        0
-      );
-      var totalOutputs = _.reduce(
-        t.outputs,
-        (memo, o) => {
-          return +o.satoshis + memo;
-        },
-        0
-      );
-
-      $.checkState(
-        totalInputs - totalOutputs >= 0,
-        'Failed state: totalInputs - totalOutputs >= 0 at buildTx'
-      );
-      $.checkState(
-        totalInputs - totalOutputs <= Defaults.MAX_TX_FEE,
-        'Failed state: totalInputs - totalOutputs <= Defaults.MAX_TX_FEE at buildTx'
-      );
-
-      return t;
+    if (txp.version >= 4) {
+      t.setVersion(2);
     } else {
-      const {
-        data,
-        outputs,
-        payProUrl,
-        tokenAddress,
-        multisigContractAddress
-      } = txp;
-      const recipients = outputs.map(output => {
-        return {
-          amount: output.amount,
-          address: output.toAddress,
-          data: output.data,
-          gasLimit: output.gasLimit
-        };
-      });
-      // Backwards compatibility BWC <= 8.9.0
-      if (data) {
-        recipients[0].data = data;
-      }
-      const unsignedTxs = [];
-      const isERC20 = tokenAddress && !payProUrl;
-      const isETHMULTISIG = multisigContractAddress;
-      const chain = isETHMULTISIG
-        ? 'ETHMULTISIG'
-        : isERC20
-        ? 'ERC20'
-        : this.getChain(coin);
-      for (let index = 0; index < recipients.length; index++) {
-        const rawTx = Transactions.create({
-          ...txp,
-          ...recipients[index],
-          chain,
-          nonce: Number(txp.nonce) + Number(index),
-          recipients: [recipients[index]]
-        });
-        unsignedTxs.push(rawTx);
-      }
-      return { uncheckedSerialize: () => unsignedTxs };
+      t.setVersion(1);
     }
+
+    $.checkState(
+      _.includes(_.values(Constants.SCRIPT_TYPES), txp.addressType),
+      'Failed state: addressType not in SCRIPT_TYPES'
+    );
+
+    switch (txp.addressType) {
+      case Constants.SCRIPT_TYPES.P2WSH:
+      case Constants.SCRIPT_TYPES.P2SH:
+        _.each(txp.inputs, i => {
+          t.from(i, i.publicKeys, txp.requiredSignatures);
+        });
+        break;
+      case Constants.SCRIPT_TYPES.P2WPKH:
+      case Constants.SCRIPT_TYPES.P2PKH:
+        t.from(txp.inputs);
+        break;
+    }
+
+    if (txp.toAddress && txp.amount && !txp.outputs) {
+      t.to(txp.toAddress, txp.amount);
+    } else if (txp.outputs) {
+      _.each(txp.outputs, o => {
+        $.checkState(
+          o.script || o.toAddress,
+          'Output should have either toAddress or script specified'
+        );
+        if (o.script) {
+          t.addOutput(
+            new ltzcore.Transaction.Output({
+              script: o.script,
+              satoshis: o.amount
+            })
+          );
+        } else {
+          t.to(o.toAddress, o.amount);
+        }
+      });
+    }
+
+    t.fee(txp.fee);
+    t.change(txp.changeAddress.address);
+
+    // Shuffle outputs for improved privacy
+    if (t.outputs.length > 1) {
+      var outputOrder = _.reject(txp.outputOrder, order => {
+        return order >= t.outputs.length;
+      });
+      $.checkState(
+        t.outputs.length == outputOrder.length,
+        'Failed state: t.ouputs.length == outputOrder.length at buildTx()'
+      );
+      t.sortOutputs(outputs => {
+        return _.map(outputOrder, i => {
+          return outputs[i];
+        });
+      });
+    }
+
+    // Validate inputs vs outputs independently of Ltzcore
+    var totalInputs = _.reduce(
+      txp.inputs,
+      (memo, i) => {
+        return +i.satoshis + memo;
+      },
+      0
+    );
+    var totalOutputs = _.reduce(
+      t.outputs,
+      (memo, o) => {
+        return +o.satoshis + memo;
+      },
+      0
+    );
+
+    $.checkState(
+      totalInputs - totalOutputs >= 0,
+      'Failed state: totalInputs - totalOutputs >= 0 at buildTx'
+    );
+    $.checkState(
+      totalInputs - totalOutputs <= Defaults.MAX_TX_FEE,
+      'Failed state: totalInputs - totalOutputs <= Defaults.MAX_TX_FEE at buildTx'
+    );
+
+    return t;
   }
 }

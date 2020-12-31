@@ -40,19 +40,11 @@ export class Client {
     });
   }
 
-  async getToken(contractAddress) {
-    const url = `${this.apiUrl}/token/${contractAddress}`;
-    return request.get(url, { json: true });
-  }
-
   async getBalance(params: { payload?: any; pubKey: string; time?: string }) {
     const { payload, pubKey, time } = params;
     let url = `${this.apiUrl}/wallet/${pubKey}/balance`;
     if (time) {
       url += `/${time}`;
-    }
-    if (payload && payload.tokenContractAddress) {
-      url += `?tokenAddress=${payload.tokenContractAddress}`;
     }
     const signature = this.sign({ method: 'GET', url });
     return request.get(url, {
@@ -94,7 +86,7 @@ export class Client {
   }
 
   listTransactions(params) {
-    const { pubKey, startBlock, startDate, endBlock, endDate, includeMempool, payload, tokenContractAddress } = params;
+    const { pubKey, startBlock, startDate, endBlock, endDate, includeMempool, payload } = params;
     let url = `${this.apiUrl}/wallet/${pubKey}/transactions`;
     let query = '';
     if (startBlock) {
@@ -111,9 +103,6 @@ export class Client {
     }
     if (includeMempool) {
       query += 'includeMempool=true';
-    }
-    if (tokenContractAddress) {
-      query += `tokenAddress=${tokenContractAddress}`;
     }
     if (query) {
       url += '?' + query;

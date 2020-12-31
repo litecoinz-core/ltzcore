@@ -162,12 +162,6 @@ export class PushNotificationsService {
                     if (err) return next(err);
 
                     const notifications = _.map(subs, sub => {
-                      const tokenAddress =
-                        notification.data && notification.data.tokenAddress ? notification.data.tokenAddress : null;
-                      const multisigContractAddress =
-                        notification.data && notification.data.multisigContractAddress
-                          ? notification.data.multisigContractAddress
-                          : null;
                       return {
                         to: sub.token,
                         priority: 'high',
@@ -181,8 +175,6 @@ export class PushNotificationsService {
                         },
                         data: {
                           walletId: sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(notification.walletId)),
-                          tokenAddress,
-                          multisigContractAddress,
                           copayerId: sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(recipient.copayerId)),
                           title: content.plain.subject,
                           body: content.plain.body,
@@ -337,12 +329,7 @@ export class PushNotificationsService {
     const UNIT_LABELS = {
       btc: 'BTC',
       bit: 'bits',
-      bch: 'BCH',
-      eth: 'ETH',
-      usdc: 'USDC',
-      pax: 'PAX',
-      gusd: 'GUSD',
-      busd: 'BUSD'
+      bch: 'BCH'
     };
     const data = _.cloneDeep(notification.data);
     data.subjectPrefix = _.trim(this.subjectPrefix + ' ');
@@ -350,16 +337,6 @@ export class PushNotificationsService {
       try {
         let unit = recipient.unit.toLowerCase();
         let label = UNIT_LABELS[unit];
-        if (data.tokenAddress) {
-          const tokenAddress = data.tokenAddress.toLowerCase();
-          if (Constants.TOKEN_OPTS[tokenAddress]) {
-            unit = Constants.TOKEN_OPTS[tokenAddress].symbol.toLowerCase();
-            label = UNIT_LABELS[unit];
-          } else {
-            label = 'tokens';
-            throw new Error('Notifications for unsupported token are not allowed');
-          }
-        }
         data.amount = Utils.formatAmount(+data.amount, unit) + ' ' + label;
       } catch (ex) {
         return cb(new Error('Could not format amount' + ex));

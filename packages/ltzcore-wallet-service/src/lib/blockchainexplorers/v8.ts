@@ -11,8 +11,7 @@ const Common = require('../common');
 const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
   btc: Ltzcore,
-  bch: require('ltzcore-lib-cash'),
-  eth: Ltzcore
+  bch: require('ltzcore-lib-cash')
 };
 const config = require('../../config');
 const Constants = Common.Constants,
@@ -131,9 +130,8 @@ export class V8 {
 
   async getBalance(wallet, cb) {
     const client = this._getAuthClient(wallet);
-    const { tokenAddress, multisigContractAddress } = wallet;
     client
-      .getBalance({ pubKey: wallet.beAuthPublicKey2, payload: {}, tokenAddress, multisigContractAddress })
+      .getBalance({ pubKey: wallet.beAuthPublicKey2, payload: {} })
       .then(ret => {
         return cb(null, ret);
       })
@@ -301,9 +299,7 @@ export class V8 {
       includeMempool: true,
       pubKey: wallet.beAuthPublicKey2,
       payload: {},
-      startBlock: undefined,
-      tokenAddress: wallet.tokenAddress,
-      multisigContractAddress: wallet.multisigContractAddress
+      startBlock: undefined
     };
 
     if (_.isNumber(startBlock)) opts.startBlock = startBlock;
@@ -369,62 +365,6 @@ export class V8 {
       .then(ret => {
         ret = JSON.parse(ret);
         return cb(null, ret.nonce);
-      })
-      .catch(err => {
-        return cb(err);
-      });
-  }
-
-  estimateGas(opts, cb) {
-    const url = this.baseUrl + '/gas';
-    console.log('[v8.js.378:url:] CHECKING GAS LIMIT', url);
-    this.request
-      .post(url, { body: opts, json: true })
-      .then(gasLimit => {
-        gasLimit = JSON.parse(gasLimit);
-        return cb(null, gasLimit);
-      })
-      .catch(err => {
-        return cb(err);
-      });
-  }
-
-  getMultisigContractInstantiationInfo(opts, cb) {
-    const url = `${this.baseUrl}/ethmultisig/${opts.sender}/instantiation/${opts.txId}`;
-    console.log('[v8.js.378:url:] CHECKING CONTRACT INSTANTIATION INFO', url);
-    this.request
-      .get(url, {})
-      .then(contractInstantiationInfo => {
-        contractInstantiationInfo = JSON.parse(contractInstantiationInfo);
-        return cb(null, contractInstantiationInfo);
-      })
-      .catch(err => {
-        return cb(err);
-      });
-  }
-
-  getMultisigContractInfo(opts, cb) {
-    const url = this.baseUrl + '/ethmultisig/info/' + opts.multisigContractAddress;
-    console.log('[v8.js.378:url:] CHECKING CONTRACT INFO', url);
-    this.request
-      .get(url, {})
-      .then(contractInfo => {
-        contractInfo = JSON.parse(contractInfo);
-        return cb(null, contractInfo);
-      })
-      .catch(err => {
-        return cb(err);
-      });
-  }
-
-  getMultisigTxpsInfo(opts, cb) {
-    const url = this.baseUrl + '/ethmultisig/txps/' + opts.multisigContractAddress;
-    console.log('[v8.js.378:url:] CHECKING CONTRACT TXPS INFO', url);
-    this.request
-      .get(url, {})
-      .then(multisigTxpsInfo => {
-        multisigTxpsInfo = JSON.parse(multisigTxpsInfo);
-        return cb(null, multisigTxpsInfo);
       })
       .catch(err => {
         return cb(err);

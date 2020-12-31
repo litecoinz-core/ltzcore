@@ -1,15 +1,9 @@
 import { BCHTxProvider } from './bch';
 import { BTCTxProvider } from './btc';
-import { ERC20TxProvider } from './erc20';
-import { ETHTxProvider } from './eth';
-import { ETHMULTISIGTxProvider } from './eth-multisig';
 
 const providers = {
   BTC: new BTCTxProvider(),
-  BCH: new BCHTxProvider(),
-  ETH: new ETHTxProvider(),
-  ERC20: new ERC20TxProvider(),
-  ETHMULTISIG: new ETHMULTISIGTxProvider()
+  BCH: new BCHTxProvider()
 };
 
 export class TransactionsProxy {

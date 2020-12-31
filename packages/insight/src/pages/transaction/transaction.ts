@@ -61,9 +61,6 @@ export class TransactionPage {
         ) {
           tx = this.txProvider.toUtxoCoinsAppTx(response);
         }
-        if (this.chainNetwork.chain === 'ETH') {
-          tx = this.txProvider.toEthAppTx(response);
-        }
         this.tx = tx;
         this.loading = false;
         this.txProvider

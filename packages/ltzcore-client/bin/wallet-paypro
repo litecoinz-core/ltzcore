@@ -85,12 +85,12 @@ const main = async () => {
   let signedTransactions = [];
   let password;
   for (const instruction of instructions) {
-    const { type, requiredFeeRate, outputs, gasPrice, to, value, data } = instruction;
+    const { type, requiredFeeRate, outputs, to, value, data } = instruction;
     const recipients = [{
       address: to || outputs[0].address,
       amount: value >= 0 ? value : outputs[0].amount
     }];
-    const feeRate = requiredFeeRate || gasPrice;
+    const feeRate = requiredFeeRate;
     const utxos = await wallet.getUtxosArray();
     const params = { recipients, feeRate, from, data, value, utxos };
     params.nonce = Number(nonce);

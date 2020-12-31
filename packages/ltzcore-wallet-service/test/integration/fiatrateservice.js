@@ -182,7 +182,7 @@ describe('Fiat rate service', function() {
     });
 
     it('should get historical rates from ts to now', function(done) {
-      const coins = ['btc', 'bch', 'eth'];
+      const coins = ['btc', 'bch'];
       var clock = sinon.useFakeTimers({toFake: ['Date']});
       async.each([1.00, 2.00, 3.00, 4.00], function(value, next) {
         clock.tick(100);
@@ -252,7 +252,6 @@ describe('Fiat rate service', function() {
           should.exist(res);
           res['btc'].length.should.equal(4);
           should.not.exist(res['bch']);
-          should.not.exist(res['eth']);
 
           res['btc'][3].ts.should.equal(100);
           res['btc'][3].rate.should.equal(1.00);
@@ -272,7 +271,7 @@ describe('Fiat rate service', function() {
     });
 
     it('should return current rates if missing opts.ts when fetching historical rates', function(done) {
-      const coins = ['btc', 'bch', 'eth'];
+      const coins = ['btc', 'bch'];
       var clock = sinon.useFakeTimers({toFake: ['Date']});
       async.each([1.00, 2.00, 3.00, 4.00], function(value, next) {
         clock.tick(11 * 60 * 1000);
@@ -355,13 +354,6 @@ describe('Fiat rate service', function() {
         code: 'EUR',
         rate: 120,
       }];
-      var eth = [{
-        code: 'USD',
-        rate: 121,
-      }, {
-        code: 'EUR',
-        rate: 121,
-      }];
 
       request.get.withArgs({
         url: 'https://bitpay.com/api/rates/BTC',
@@ -371,10 +363,6 @@ describe('Fiat rate service', function() {
         url: 'https://bitpay.com/api/rates/BCH',
         json: true
       }).yields(null, null, bch);
-      request.get.withArgs({
-        url: 'https://bitpay.com/api/rates/ETH',
-        json: true
-      }).yields(null, null, eth);
 
       service._fetch(function(err) {
         should.not.exist(err);
@@ -392,21 +380,13 @@ describe('Fiat rate service', function() {
             res.fetchedOn.should.equal(100);
             res.rate.should.equal(120.00);
             service.getRate({
-              code: 'USD',
-              coin: 'eth',
+              code: 'EUR'
             }, function(err, res) {
               should.not.exist(err);
               res.fetchedOn.should.equal(100);
-              res.rate.should.equal(121);
-              service.getRate({
-                code: 'EUR'
-              }, function(err, res) {
-                should.not.exist(err);
-                res.fetchedOn.should.equal(100);
-                res.rate.should.equal(234.56);
-                clock.restore();
-                done();
-              });
+              res.rate.should.equal(234.56);
+              clock.restore();
+              done();
             });
           });
         });

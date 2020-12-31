@@ -2,7 +2,6 @@ import { ITxProposal, IWallet, TxProposal } from '../model';
 import { WalletService } from '../server';
 import { BchChain } from './bch';
 import { BtcChain } from './btc';
-import { EthChain } from './eth';
 
 const Common = require('../common');
 const Constants = Common.Constants;
@@ -11,7 +10,6 @@ export interface INotificationData {
   out: {
     address: any;
     amount: any;
-    tokenAddress?: any;
   };
   txid: any;
 }
@@ -57,8 +55,7 @@ export interface IChain {
 
 const chain: { [chain: string]: IChain } = {
   BTC: new BtcChain(),
-  BCH: new BchChain(),
-  ETH: new EthChain()
+  BCH: new BchChain()
 };
 
 class ChainProxy {
@@ -68,11 +65,7 @@ class ChainProxy {
   }
 
   getChain(coin: string): string {
-    let normalizedChain = coin.toUpperCase();
-    if (Constants.ERC20[normalizedChain]) {
-      normalizedChain = 'ETH';
-    }
-    return normalizedChain;
+    return coin.toUpperCase();
   }
 
   getWalletBalance(server, wallet, opts, cb) {

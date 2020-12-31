@@ -5,8 +5,6 @@ import { AddressProvider } from '../../providers/address/address';
 import { ChainNetwork } from '../../providers/api/api';
 import { BlocksProvider } from '../../providers/blocks/blocks';
 import {
-  ApiEthTx,
-  AppEthCoin,
   TxsProvider
 } from '../../providers/transactions/transactions';
 
@@ -40,61 +38,33 @@ export class TransactionListComponent implements OnInit {
   public ngOnInit(): void {
     if (this.transactions && this.transactions.length === 0) {
       if (this.queryType === 'blockHash') {
-        if (
-          this.chainNetwork.chain === 'BTC' ||
-          this.chainNetwork.chain === 'BCH'
-        ) {
-          this.fetchBlockTxCoinInfo(1);
-        } else {
-          this.txProvider
-            .getTxs(this.chainNetwork, { blockHash: this.queryValue })
-            .subscribe(txs => {
-              _.forEach(txs, (tx: ApiEthTx) => {
-                this.transactions.push(this.txProvider.toEthAppTx(tx));
-              });
-            });
-          this.loading = false;
-        }
+        this.fetchBlockTxCoinInfo(1);
       } else if (this.queryType === 'address') {
         const txs: any = [];
 
-        if (
-          this.chainNetwork.chain === 'BTC' ||
-          this.chainNetwork.chain === 'BCH'
-        ) {
-          this.addrProvider
-            .getAddressActivityCoins(this.queryValue, this.chainNetwork)
-            .subscribe(
-              (response: any) => {
-                this.populateTxsForAddress(
-                  response.mintedTxids,
-                  response.fundingTxInputs,
-                  response.fundingTxOutputs
-                );
-                this.populateTxsForAddress(
-                  response.spentTxids,
-                  response.spendingTxInputs,
-                  response.spendingTxOutputs
-                );
-                this.events.publish('TransactionList', {
-                  length: this.transactions.length
-                });
-                this.loading = false;
-              },
-              () => {
-                this.loading = false;
-              }
-            );
-        } else {
-          this.addrProvider
-            .getAddressActivity(this.queryValue, this.chainNetwork)
-            .subscribe(transactions => {
-              _.forEach(transactions, (tx: any) => {
-                this.transactions.push(this.txProvider.toEthAppTx(tx));
+        this.addrProvider
+          .getAddressActivityCoins(this.queryValue, this.chainNetwork)
+          .subscribe(
+            (response: any) => {
+              this.populateTxsForAddress(
+                response.mintedTxids,
+                response.fundingTxInputs,
+                response.fundingTxOutputs
+              );
+              this.populateTxsForAddress(
+                response.spentTxids,
+                response.spendingTxInputs,
+                response.spendingTxOutputs
+              );
+              this.events.publish('TransactionList', {
+                length: this.transactions.length
               });
-            });
-          this.loading = false;
-        }
+              this.loading = false;
+            },
+            () => {
+              this.loading = false;
+            }
+          );
       }
     } else {
       this.loading = false;

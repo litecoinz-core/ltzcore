@@ -135,7 +135,6 @@ export class Wallet {
       password: await Bcrypt.hash(password, 10),
       xPubKey: hdPrivKey.xpubkey,
       pubKey,
-      tokens: [],
       storageType,
       lite
     });
@@ -239,15 +238,6 @@ export class Wallet {
 
   getBalance(time?: string, token?: string) {
     let payload;
-    if (token) {
-      let tokenContractAddress;
-      const tokenObj = this.tokens.find(tok => tok.symbol === token);
-      if (!tokenObj) {
-        throw new Error(`${token} not found on wallet ${this.name}`);
-      }
-      tokenContractAddress = tokenObj.address;
-      payload = { tokenContractAddress };
-    }
     return this.client.getBalance({ payload, pubKey: this.authPubKey, time });
   }
 
@@ -281,35 +271,10 @@ export class Wallet {
   }
 
   listTransactions(params) {
-    const { token } = params;
-    if (token) {
-      let tokenContractAddress;
-      const tokenObj = this.tokens.find(tok => tok.symbol === token);
-      if (!tokenObj) {
-        throw new Error(`${token} not found on wallet ${this.name}`);
-      }
-      params.tokenContractAddress = tokenObj.address;
-    }
     return this.client.listTransactions({
       ...params,
       pubKey: this.authPubKey
     });
-  }
-
-  async getToken(contractAddress) {
-    return this.client.getToken(contractAddress);
-  }
-
-  async addToken(params) {
-    if (!this.tokens) {
-      this.tokens = [];
-    }
-    this.tokens.push({
-      symbol: params.symbol,
-      address: params.address,
-      decimals: params.decimals
-    });
-    await this.saveWallet();
   }
 
   async newTx(params: {
@@ -322,19 +287,8 @@ export class Wallet {
     nonce?: number;
     tag?: number;
     data?: string;
-    token?: string;
-    gasLimit?: number;
-    gasPrice?: number;
   }) {
-    const chain = params.token ? 'ERC20' : this.chain;
-    let tokenContractAddress;
-    if (params.token) {
-      const tokenObj = this.tokens.find(tok => tok.symbol === params.token);
-      if (!tokenObj) {
-        throw new Error(`${params.token} not found on wallet ${this.name}`);
-      }
-      tokenContractAddress = tokenObj.address;
-    }
+    const chain = this.chain;
     const payload = {
       network: this.network,
       chain,
@@ -347,10 +301,7 @@ export class Wallet {
       utxos: params.utxos,
       nonce: params.nonce,
       tag: params.tag,
-      gasPrice: params.gasPrice || params.feeRate || params.fee,
-      gasLimit: params.gasLimit || 200000,
-      data: params.data,
-      tokenAddress: tokenContractAddress
+      data: params.data
     };
     return Transactions.create(payload);
   }

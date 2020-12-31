@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { BlockSummaryEthComponentModule } from '../../components/block-summary-eth/block-summary-eth.module';
 import { BlockSummaryComponentModule } from '../../components/block-summary/block-summary.module';
 import { ErrorComponentModule } from '../../components/error/error.module';
 import { FooterComponentModule } from '../../components/footer/footer.module';
@@ -15,7 +14,6 @@ import { BlockDetailPage } from './block-detail';
   imports: [
     IonicPageModule.forChild(BlockDetailPage),
     BlockSummaryComponentModule,
-    BlockSummaryEthComponentModule,
     TransactionListComponentModule,
     FooterComponentModule,
     HeadNavComponentModule,

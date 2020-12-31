@@ -10,7 +10,6 @@ try {
     .option('--time [time]', 'optional - Get balance at specific time')
     .option('--path [path]', 'optional - Custom wallet storage path')
     .option('--storageType [storageType]', 'optional - name of the database to use (default level)')
-    .option('--token [token]', 'optional - Get balance of an ERC20 token')
     .parse(process.argv);
 } catch (e) {
   console.log(e.message);

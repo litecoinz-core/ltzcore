@@ -49,8 +49,7 @@ export class BlockchainMonitor {
         done => {
           this.explorers = {
             btc: {},
-            bch: {},
-            eth: {}
+            bch: {}
           };
 
           const coinNetworkPairs = [];
@@ -203,24 +202,13 @@ export class BlockchainMonitor {
     let out = data.out;
     if (!out || !out.address || out.address.length < 10) return;
 
-    // For eth, amount = 0 is ok, repeating addr payments are ok (no change).
-    if (coin != 'eth') {
-      if (!(out.amount > 0)) return;
-      if (this.last.indexOf(out.address) >= 0) {
-        logger.debug('The incoming tx"s out ' + out.address + ' was already processed');
-        return;
-      }
-      this.last[this.Ni++] = out.address;
-      if (this.Ni >= this.N) this.Ni = 0;
-    } else if (coin == 'eth') {
-      if (this.lastTx.indexOf(data.txid) >= 0) {
-        logger.debug('The incoming tx ' + data.txid + ' was already processed');
-        return;
-      }
-
-      this.lastTx[this.Nix++] = data.txid;
-      if (this.Nix >= this.N) this.Nix = 0;
+    if (!(out.amount > 0)) return;
+    if (this.last.indexOf(out.address) >= 0) {
+      logger.debug('The incoming tx"s out ' + out.address + ' was already processed');
+      return;
     }
+    this.last[this.Ni++] = out.address;
+    if (this.Ni >= this.N) this.Ni = 0;
 
     logger.debug(`Checking ${coin}:${network}:${out.address} ${out.amount}`);
     this.storage.fetchAddressByCoin(coin, out.address, (err, address) => {
@@ -253,8 +241,6 @@ export class BlockchainMonitor {
             txid: data.txid,
             address: out.address,
             amount: out.amount,
-            tokenAddress: out.tokenAddress,
-            multisigContractAddress: out.multisigContractAddress
           },
           walletId
         });

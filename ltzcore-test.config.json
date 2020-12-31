@@ -1,6 +1,6 @@
 {
   "ltzcoreNode": {
-    "modules": ["./bitcoin", "./bitcoin-cash", "./ethereum"],
+    "modules": ["./bitcoin", "./bitcoin-cash"],
     "services": {
       "api": {
         "wallets": {
@@ -23,22 +23,6 @@
             "port": 8333,
             "username": "ltzcorenodetest",
             "password": "local321"
-          }
-        }
-      },
-      "ETH": {
-        "testnet": {
-          "chainSource": "p2p",
-          "trustedPeers": [
-            {
-              "host": "parity",
-              "port": 30303
-            }
-          ],
-          "provider": {
-            "host": "parity",
-            "protocol": "ws",
-            "port": 8546
           }
         }
       }

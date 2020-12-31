@@ -41,17 +41,9 @@ export class Client {
   }
 
   async getBalance(params) {
-    const { payload, pubKey, tokenAddress, multisigContractAddress } = params;
+    const { payload, pubKey } = params;
     let query = '';
     let apiUrl = `${this.baseUrl}/wallet/${pubKey}/balance`;
-
-    if (tokenAddress) {
-      query = `?tokenAddress=${tokenAddress}`;
-    }
-
-    if (multisigContractAddress) {
-      apiUrl = `${this.baseUrl}/address/${multisigContractAddress}/balance`;
-    }
 
     const url = apiUrl + query;
     const signature = this.sign({ method: 'GET', url, payload });
@@ -124,9 +116,7 @@ export class Client {
       startDate,
       endBlock,
       endDate,
-      includeMempool,
-      tokenAddress,
-      multisigContractAddress
+      includeMempool
     } = params;
     let query = '';
     let apiUrl = `${this.baseUrl}/wallet/${pubKey}/transactions?`;
@@ -135,12 +125,6 @@ export class Client {
     }
     if (endBlock) {
       query += `endBlock=${endBlock}&`;
-    }
-    if (tokenAddress) {
-      query += `tokenAddress=${tokenAddress}&`;
-    }
-    if (multisigContractAddress) {
-      apiUrl = `${this.baseUrl}/ethmultisig/transactions/${multisigContractAddress}?`;
     }
     if (includeMempool) {
       query += 'includeMempool=true';

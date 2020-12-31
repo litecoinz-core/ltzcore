@@ -1,6 +1,5 @@
 import { BchValidation } from './bch';
 import { BtcValidation } from './btc';
-import { EthValidation } from './eth';
 
 export interface IValidation {
   validateAddress(network: string, address: string): boolean;
@@ -9,8 +8,7 @@ export interface IValidation {
 
 const validation: { [chain: string]: IValidation } = {
   BTC: new BtcValidation(),
-  BCH: new BchValidation(),
-  ETH: new EthValidation()
+  BCH: new BchValidation()
 };
 
 export class ValidationProxy {

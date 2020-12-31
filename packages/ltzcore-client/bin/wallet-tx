@@ -18,7 +18,6 @@ program
   .option('--storageType [storageType]', 'optional - Name of the database to use (default Level)')
   .option('--from [from]', 'optional - From Address')
   .option('--nonce [nonce]', 'optional - Nonce')
-  .option('--token [currency]', 'optional - ERC20 token')
   .parse(process.argv);
 
 const main = async () => {

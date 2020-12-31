@@ -68,7 +68,6 @@ helpers.before = function(cb) {
     be.getCheckData = sinon.stub().callsArgWith(1, null, {sum: 100});
     be.getUtxos = sinon.stub().callsArgWith(1, null,[]);
     be.getBlockchainHeight = sinon.stub().callsArgWith(0, null, 1000, 'hash');
-    be.estimateGas = sinon.stub().callsArgWith(1, null, Defaults.MIN_GAS_LIMIT);
     be.getBalance = sinon.stub().callsArgWith(1, null, {unconfirmed:0, confirmed: '10000000000', balance: '10000000000' });
 
     // just a number >0
@@ -225,7 +224,6 @@ helpers.getSignedCopayerOpts = function(opts) {
   return opts;
 };
 
-/* ETH wallet use the provided key here, probably 44'/0'/0' */
 helpers.createAndJoinWallet = function(m, n, opts, cb) {
   if (_.isFunction(opts)) {
     cb = opts;
@@ -354,26 +352,6 @@ helpers.stubUtxos = function(server, wallet, amounts, opts, cb) {
     opts = {};
   }
   opts = opts || {};
-
-  if (opts.tokenAddress) {
-    amounts = _.isArray(amounts) ? amounts : [amounts];
-    blockchainExplorer.getBalance = function(opts, cb) {
-      if (opts.tokenAddress) {
-        return cb(null, {unconfirmed:0, confirmed: 2e6, balance: 2e6 });
-      }
-      let conf =  _.sum(_.map(amounts, x =>  Number((x*1e18).toFixed(0))));
-      return cb(null, {unconfirmed:0, confirmed: conf, balance: conf });
-    }
-    blockchainExplorer.estimateFee = sinon.stub().callsArgWith(1, null, 20000000000);
-    return cb();
-  }
-
-  if (wallet.coin == 'eth') {
-    amounts = _.isArray(amounts) ? amounts : [amounts];
-    let conf =  _.sum(_.map(amounts, x =>  Number((x*1e18).toFixed(0))));
-    blockchainExplorer.getBalance = sinon.stub().callsArgWith(1, null, {unconfirmed:0, confirmed: conf, balance: conf });
-    return cb();
-  }
 
   if (!helpers._utxos) helpers._utxos = {};
 
@@ -563,43 +541,21 @@ helpers.clientSign = function(txp, derivedXPrivKey) {
 
   var xpriv = new Ltzcore.HDPrivateKey(derivedXPrivKey, txp.network);
 
-  switch(txp.coin) {
-    case 'eth':
+  _.each(txp.inputs, function(i) {
+    if (!derived[i.path]) {
+      derived[i.path] = xpriv.deriveChild(i.path).privateKey;
+      privs.push(derived[i.path]);
+    }
+  });
 
-      // For eth => account, 0, change = 0
-      const priv =  xpriv.derive('m/0/0').privateKey;
-      const privKey = priv.toString('hex');
-      let tx = ChainService.getLtzcoreTx(txp).uncheckedSerialize();
-      const isERC20 = txp.tokenAddress && !txp.payProUrl;
-      const chain = isERC20 ? 'ERC20' : ChainService.getChain(txp.coin);
-      tx = typeof tx === 'string'? [tx] : tx;
-      signatures = [];
-      for (const rawTx of tx) {
-        const signed = CWC.Transactions.getSignature({
-          chain,
-          tx: rawTx,
-          key: { privKey: privKey.toString('hex') },
-        });
-        signatures.push(signed);
-      }
-      break;
-    default:
-      _.each(txp.inputs, function(i) {
-        if (!derived[i.path]) {
-          derived[i.path] = xpriv.deriveChild(i.path).privateKey;
-          privs.push(derived[i.path]);
-        }
-      });
+  var t = ChainService.getLtzcoreTx(txp);
+  signatures = _.map(privs, function(priv, i) {
+    return t.getSignatures(priv, undefined, txp.signingMethod);
+  });
 
-      var t = ChainService.getLtzcoreTx(txp);
-      signatures = _.map(privs, function(priv, i) {
-        return t.getSignatures(priv, undefined, txp.signingMethod);
-      });
-
-      signatures = _.map(_.sortBy(_.flatten(signatures), 'inputIndex'), function(s) {
-        return s.signature.toDER(txp.signingMethod).toString('hex');
-      });
-  };
+  signatures = _.map(_.sortBy(_.flatten(signatures), 'inputIndex'), function(s) {
+    return s.signature.toDER(txp.signingMethod).toString('hex');
+  });
 
   return signatures;
 };

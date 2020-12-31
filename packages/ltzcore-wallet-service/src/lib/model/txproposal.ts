@@ -33,8 +33,6 @@ export interface ITxProposal {
     address: string;
     toAddress?: string;
     message?: string;
-    data?: string;
-    gasLimit?: number;
     script?: string;
   }>;
   outputOrder: number;
@@ -59,12 +57,6 @@ export interface ITxProposal {
   proposalSignaturePubKeySig: string;
   signingMethod: string;
   lowFees: boolean;
-  nonce?: number;
-  gasPrice?: number;
-  gasLimit?: number; // Backward compatibility for BWC <= 8.9.0
-  data?: string; // Backward compatibility for BWC <= 8.9.0
-  tokenAddress?: string;
-  multisigContractAddress?: string;
   lockUntilBlockHeight?: number;
 }
 
@@ -88,8 +80,6 @@ export class TxProposal {
     address?: string;
     toAddress?: string;
     message?: string;
-    data?: string;
-    gasLimit?: number;
     script?: string;
     satoshis?: number;
   }>;
@@ -115,13 +105,6 @@ export class TxProposal {
   proposalSignaturePubKeySig: string;
   signingMethod: string;
   raw?: Array<string> | string;
-  nonce?: number;
-  gasPrice?: number;
-  gasLimit?: number; // Backward compatibility for BWC <= 8.9.0
-  data?: string; // Backward compatibility for BWC <= 8.9.0
-  tokenAddress?: string;
-  multisigContractAddress?: string;
-  multisigTxId?: string;
   lockUntilBlockHeight?: number;
 
   static create(opts) {
@@ -153,7 +136,7 @@ export class TxProposal {
     x.payProUrl = opts.payProUrl;
     x.changeAddress = opts.changeAddress;
     x.outputs = _.map(opts.outputs, output => {
-      return _.pick(output, ['amount', 'toAddress', 'message', 'data', 'gasLimit', 'script']);
+      return _.pick(output, ['amount', 'toAddress', 'message', 'script']);
     });
     x.outputOrder = _.range(x.outputs.length + 1);
     if (!opts.noShuffleOutputs) {
@@ -184,17 +167,6 @@ export class TxProposal {
     if (x.version === 4) {
       x.lockUntilBlockHeight = opts.lockUntilBlockHeight;
     }
-
-    // Coin specific features
-
-    // ETH
-    x.gasPrice = opts.gasPrice;
-    x.from = opts.from;
-    x.nonce = opts.nonce;
-    x.gasLimit = opts.gasLimit; // Backward compatibility for BWC <= 8.9.0
-    x.data = opts.data; // Backward compatibility for BWC <= 8.9.0
-    x.tokenAddress = opts.tokenAddress;
-    x.multisigContractAddress = opts.multisigContractAddress;
 
     return x;
   }
@@ -244,16 +216,6 @@ export class TxProposal {
     x.proposalSignaturePubKeySig = obj.proposalSignaturePubKeySig;
 
     x.lockUntilBlockHeight = obj.lockUntilBlockHeight;
-
-    // ETH
-    x.gasPrice = obj.gasPrice;
-    x.from = obj.from;
-    x.nonce = obj.nonce;
-    x.gasLimit = obj.gasLimit; // Backward compatibility for BWC <= 8.9.0
-    x.data = obj.data; // Backward compatibility for BWC <= 8.9.0
-    x.tokenAddress = obj.tokenAddress;
-    x.multisigContractAddress = obj.multisigContractAddress;
-    x.multisigTxId = obj.multisigTxId;
 
     if (x.status == 'broadcasted') {
       x.raw = obj.raw;

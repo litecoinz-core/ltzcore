@@ -11,7 +11,6 @@ import TestSignatures from '../signatures';
 describe('PayId', () => {
   let keys;
   let addressBTC;
-  let addressETH;
   const payId = 'test$example.com';
 
   before(() => {
@@ -29,14 +28,6 @@ describe('PayId', () => {
       addressDetailsType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'mhjPjyyFgdMQwyhf2CnzEqfLS3LdAqkvkF'
-      }
-    };
-
-    addressETH = {
-      paymentNetwork: 'ETH',
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: '0x6c42f5bafcccdd517750d8c8bdcd9918fd1364ee'
       }
     };
   });
@@ -153,32 +144,6 @@ describe('PayId', () => {
         expect(verified).be.false;
       });
 
-      it('should fail verification if signature doesn\'t match', async () => {
-        const address = {
-          address: addressETH.addressDetails.address,
-          currency: addressETH.paymentNetwork,
-          signature: 'NfhVzyoQmTv_tAo1QhFYN8GDSBRm-AvA9OzsVUmtaGr8hS-Or9k1dZVPUFvIW6E6rBt2BSngR54d2LdEPiW-2Q',
-          protected: signatures.secp256k1.ETH.signatures[0].protected,
-          header: signatures.secp256k1.ETH.signatures[0].header
-        };
-
-        const verified = await PayId.verify(payId, address);
-        expect(verified).be.false;
-      });
-
-      it('should fail verification if protected doesn\'t contain correct public key', async () => {
-        const address = {
-          address: addressETH.addressDetails.address,
-          currency: addressETH.paymentNetwork,
-          signature: signatures.secp256k1.ETH.signatures[0].signature,
-          protected: 'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI3dFpzS0h6SDZtSWJ1UnRaS1FLbE1LR1hFY1plbmlGTkVqQTM0TXc5eDk4IiwieSI6ImRDb0R2QnhpV3RJVDk0M3FtYU1TdDQyR0cyTFdsMkp2MzhaRGpCYmI5ekEiLCJrdHkiOiJFQyIsImtpZCI6Im00NldjeHN0Z29iTGR2NGpJbTNhcl9pUmJVa280QnZyU3FMR1NKM1pBSWMifX0',
-          header: signatures.secp256k1.ETH.signatures[0].header
-        };
-
-        const verified = await PayId.verify(payId, address);
-        expect(verified).be.false;
-      });
-
       describe('keys', () => {
         it('should verify signature signed with EC key', async () => {
           const verified = await PayId.verify(payId, signatures.secp256k1.BTC);
@@ -212,11 +177,6 @@ describe('PayId', () => {
           const verified = await PayId.verify(payId, signatures.ltzcoreHD.BTC);
           expect(verified).be.true;
         });
-
-        it('should verify ETH', async () => {
-          const verified = await PayId.verify(payId, signatures.secp256k1.ETH);
-          expect(verified).be.true;
-        });
       });
 
       describe('IVerifyPayId', () => {
@@ -227,18 +187,6 @@ describe('PayId', () => {
             signature: signatures.ltzcoreHD.BTC.signatures[0].signature,
             protected: signatures.ltzcoreHD.BTC.signatures[0].protected,
             header: signatures.ltzcoreHD.BTC.signatures[0].header
-          };
-          const verified = await PayId.verify(payId, address);
-          expect(verified).be.true;
-        });
-
-        it('should verify ETH', async () => {
-          const address = {
-            address: addressETH.addressDetails.address,
-            currency: addressETH.paymentNetwork,
-            signature: signatures.secp256k1.ETH.signatures[0].signature,
-            protected: signatures.secp256k1.ETH.signatures[0].protected,
-            header: signatures.secp256k1.ETH.signatures[0].header
           };
           const verified = await PayId.verify(payId, address);
           expect(verified).be.true;

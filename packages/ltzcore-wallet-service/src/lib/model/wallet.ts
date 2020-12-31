@@ -14,8 +14,7 @@ const Constants = Common.Constants,
   Utils = Common.Utils;
 const Ltzcore = {
   btc: require('ltzcore-lib'),
-  bch: require('ltzcore-lib-cash'),
-  eth: require('ltzcore-lib')
+  bch: require('ltzcore-lib-cash')
 };
 
 export interface IWallet {
