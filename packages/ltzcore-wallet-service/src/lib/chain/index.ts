@@ -1,6 +1,5 @@
 import { ITxProposal, IWallet, TxProposal } from '../model';
 import { WalletService } from '../server';
-import { BchChain } from './bch';
 import { BtcChain } from './btc';
 
 const Common = require('../common');
@@ -30,7 +29,7 @@ export interface IChain {
   getLtzcoreTx(txp: TxProposal, opts: { signed: boolean });
   convertFeePerKb(p: number, feePerKb: number);
   checkTx(server: WalletService, txp: ITxProposal);
-  checkTxUTXOs(server: WalletService, txp: ITxProposal, opts: { noCashAddr: boolean } & any, cb);
+  checkTxUTXOs(server: WalletService, txp: ITxProposal, opts: {} & any, cb);
   selectTxInputs(server: WalletService, txp: ITxProposal, wallet: IWallet, opts: { utxosToExclude: any[] } & any, cb);
   checkUtxos(opts: { fee: number; inputs: any[] });
   checkValidTxAmount(output): boolean;
@@ -48,14 +47,13 @@ export interface IChain {
   );
   addressToStorageTransform(network: string, address: {}): void;
   addressFromStorageTransform(network: string, address: {}): void;
-  validateAddress(wallet: IWallet, inaddr: string, opts: { noCashAddr: boolean } & any);
+  validateAddress(wallet: IWallet, inaddr: string, opts: {} & any);
   onCoin(coin: any): INotificationData | null;
   onTx(tx: any): INotificationData | null;
 }
 
 const chain: { [chain: string]: IChain } = {
-  BTC: new BtcChain(),
-  BCH: new BchChain()
+  BTC: new BtcChain()
 };
 
 class ChainProxy {

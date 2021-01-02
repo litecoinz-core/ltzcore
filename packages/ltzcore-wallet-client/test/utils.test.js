@@ -21,12 +21,6 @@ describe('Utils', () => {
       var res = Utils.xPubToCopayerId('btc', xpub);
       res.should.equal('8b5ae039f102653a49be29ab1625c2e77a987bcbad60715dea147976386e8fa7');
     });
-
-    it('should generate copayerId BCH', () => {
-      var xpub = Ltzcore.HDPublicKey.fromString('xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj');
-      var res = Utils.xPubToCopayerId('bch', 'xpub');
-      res.should.equal('5ea2f70a79027e385fea0e47df952db5763d7a749679f639a9f1c7235c86de4b');
-    });
   });
 
   describe('#signMessage', () => {

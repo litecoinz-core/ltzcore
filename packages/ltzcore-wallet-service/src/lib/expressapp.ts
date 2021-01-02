@@ -447,10 +447,10 @@ export class ExpressApp {
       });
     });
 
-    // DEPRECATED (do not use cashaddr)
+    // DEPRECATED
     router.get('/v1/txproposals/', (req, res) => {
       getServerWithAuth(req, res, server => {
-        server.getPendingTxs({ noCashAddr: true }, (err, pendings) => {
+        server.getPendingTxs({}, (err, pendings) => {
           if (err) return returnError(err, res, req);
           res.json(pendings);
         });
@@ -473,10 +473,9 @@ export class ExpressApp {
       return returnError(err, res, req);
     });
 
-    // DEPRECATED, no cash addr
+    // DEPRECATED
     router.post('/v2/txproposals/', (req, res) => {
       getServerWithAuth(req, res, server => {
-        req.body.noCashAddr = true;
         req.body.txpVersion = 3;
         server.createTx(req.body, (err, txp) => {
           if (err) return returnError(err, res, req);
@@ -679,12 +678,11 @@ export class ExpressApp {
       });
     });
 
-    // DEPRECATED (no cashaddr by default)
+    // DEPRECATED
     router.post('/v3/addresses/', (req, res) => {
       getServerWithAuth(req, res, server => {
         let opts = req.body;
         opts = opts || {};
-        opts.noCashAddr = true;
         server.createAddress(opts, (err, address) => {
           if (err) return returnError(err, res, req);
           res.json(address);
@@ -848,15 +846,10 @@ export class ExpressApp {
       });
     });
 
-    // We created a new endpoint that support BCH schnorr signatues
-    // so we can safely throw the error "UPGRADE NEEDED" if an old
-    // client tries to post ECDSA signatures to a Schnorr TXP.
-    // (using the old /v1/txproposal method): if (txp.signingMethod === 'schnorr' && !opts.supportBchSchnorr) return cb(Errors.UPGRADE_NEEDED);
     router.post('/v2/txproposals/:id/signatures/', (req, res) => {
       getServerWithAuth(req, res, server => {
         req.body.txProposalId = req.params['id'];
         req.body.maxTxpVersion = 3;
-        req.body.supportBchSchnorr = true;
         server.signTx(req.body, (err, txp) => {
           if (err) return returnError(err, res, req);
           res.json(txp);
@@ -865,25 +858,9 @@ export class ExpressApp {
       });
     });
 
-    /* THIS WAS NEVED ENABLED YET NOW 2020-04-07 (see above)
-    router.post('/v3/txproposals/:id/signatures/', (req, res) => {
-      getServerWithAuth(req, res, server => {
-        req.body.txProposalId = req.params['id'];
-        req.body.maxTxpVersion = 4;
-        server.signTx(req.body, (err, txp) => {
-          if (err) return returnError(err, res, req);
-          res.json(txp);
-          res.end();
-        });
-      });
-    });
-    */
-
-    //
     router.post('/v1/txproposals/:id/publish/', (req, res) => {
       getServerWithAuth(req, res, server => {
         req.body.txProposalId = req.params['id'];
-        req.body.noCashAddr = true;
         server.publishTx(req.body, (err, txp) => {
           if (err) return returnError(err, res, req);
           res.json(txp);

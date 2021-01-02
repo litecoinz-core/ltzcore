@@ -4,7 +4,7 @@
 
 **A simple Command Line Interface Wallet using [Ltzcore Wallet Service](https://github.com/bitpay/ltzcore/tree/master/packages/ltzcore-wallet-service) and its *official* client lib [Ltzcore Wallet Client](https://github.com/bitpay/ltzcore/tree/master/packages/ltzcore-wallet-client).**
 
-This can be used to operate Bitcoin and Bitcoin Cash wallets.
+This can be used to operate Bitcoin wallet.
 
 ## Quick Guide
 

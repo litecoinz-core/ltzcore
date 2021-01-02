@@ -53,13 +53,7 @@ export class BlockDetailPage {
   ionViewDidEnter() {
     this.blocksProvider.getBlock(this.blockHash, this.chainNetwork).subscribe(
       response => {
-        let block;
-        if (
-          this.chainNetwork.chain === 'BTC' ||
-          this.chainNetwork.chain === 'BCH'
-        ) {
-          block = this.blocksProvider.toUtxoCoinAppBlock(response);
-        }
+        let block = this.blocksProvider.toUtxoCoinAppBlock(response);
         this.block = block;
         this.txProvider
           .getConfirmations(this.block.height, this.chainNetwork)

@@ -1,6 +1,6 @@
 {
   "ltzcoreNode": {
-    "modules": ["./bitcoin", "./bitcoin-cash"],
+    "modules": ["./bitcoin"],
     "services": {
       "api": {
         "wallets": {

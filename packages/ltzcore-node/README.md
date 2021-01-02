@@ -43,39 +43,6 @@ Set up your ltzcore.config.json file in ./ltzcore
             "password": "password"
           }
         }
-      },
-      "BCH": {
-        "mainnet": {
-          "parentChain": "BTC",
-          "forkHeight": 478558,
-          "trustedPeers": [
-            {
-              "host": "127.0.0.1",
-              "port": 30008
-            }
-          ],
-          "rpc": {
-            "host": "127.0.0.1",
-            "port": 30009,
-            "username": "username",
-            "password": "password"
-          }
-        },
-        "regtest": {
-          "chainSource": "p2p",
-          "trustedPeers": [
-            {
-              "host": "127.0.0.1",
-              "port": 30020
-            }
-          ],
-          "rpc": {
-            "host": "127.0.0.1",
-            "port": 30021,
-            "username": "username",
-            "password": "password"
-          }
-        }
       }
     }
   }

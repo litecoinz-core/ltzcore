@@ -54,13 +54,7 @@ export class TransactionPage {
   public ionViewDidEnter(): void {
     this.txProvider.getTx(this.txId, this.chainNetwork).subscribe(
       response => {
-        let tx;
-        if (
-          this.chainNetwork.chain === 'BTC' ||
-          this.chainNetwork.chain === 'BCH'
-        ) {
-          tx = this.txProvider.toUtxoCoinsAppTx(response);
-        }
+        let tx = this.txProvider.toUtxoCoinsAppTx(response);
         this.tx = tx;
         this.loading = false;
         this.txProvider

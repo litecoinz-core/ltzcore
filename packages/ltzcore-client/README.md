@@ -31,7 +31,7 @@ No baseUrl flag will automatically create a wallet that points to https://api.bi
 To create a wallet to point to local ltzcore-node.
 
 ```sh
-./wallet-create --name myregtestwallet --chain BCH --network regtest --baseUrl http://localhost:3000/api
+./wallet-create --name myregtestwallet --chain BTC --network regtest --baseUrl http://localhost:3000/api
 ```
 
 ### Register an Existing Wallet

@@ -18,8 +18,7 @@ var async = require('async');
 var events = require('events');
 var Ltzcore = CWC.LtzcoreLib;
 var Ltzcore_ = {
-  btc: CWC.LtzcoreLib,
-  bch: CWC.LtzcoreLibCash
+  btc: CWC.LtzcoreLib
 };
 var Mnemonic = require('ltzcore-mnemonic');
 var url = require('url');
@@ -63,7 +62,6 @@ export class API extends EventEmitter {
 
   // Expose ltzcore
   static Ltzcore = CWC.LtzcoreLib;
-  static LtzcoreCash = CWC.LtzcoreLibCash;
 
   constructor(opts?) {
     super();
@@ -791,7 +789,7 @@ export class API extends EventEmitter {
   // /**
   // * Get current fee levels for the specified network
   // *
-  // * @param {string} coin - 'btc' (default) or 'bch'
+  // * @param {string} coin - 'btc' (default)'
   // * @param {string} network - 'livenet' (default) or 'testnet'
   // * @param {Callback} cb
   // * @returns {Callback} cb - Returns error or an object with status information
@@ -839,7 +837,7 @@ export class API extends EventEmitter {
   // * @param {Number} m
   // * @param {Number} n
   // * @param {object} opts (optional: advanced options)
-  // * @param {string} opts.coin[='btc'] - The coin for this wallet (btc, bch).
+  // * @param {string} opts.coin[='btc'] - The coin for this wallet (btc).
   // * @param {string} opts.network[='livenet']
   // * @param {string} opts.singleAddress[=false] - The wallet will only ever have one address.
   // * @param {String} opts.walletPrivKey - set a walletPrivKey (instead of random)
@@ -932,7 +930,7 @@ export class API extends EventEmitter {
   // * @param {String} secret
   // * @param {String} copayerName
   // * @param {Object} opts
-  // * @param {string} opts.coin[='btc'] - The expected coin for this wallet (btc, bch).
+  // * @param {string} opts.coin[='btc'] - The expected coin for this wallet (btc).
   // * @param {Boolean} opts.dryRun[=false] - Simulate wallet join
   // * @param {Callback} cb
   // * @returns {Callback} cb - Returns the wallet
@@ -1380,7 +1378,7 @@ export class API extends EventEmitter {
   // * @param {Array} opts.inputs - Optional. Inputs for this TX
   // * @param {number} opts.fee - Optional. Use an fixed fee for this TX (only when opts.inputs is specified)
   // * @param {Boolean} opts.noShuffleOutputs - Optional. If set, TX outputs won't be shuffled. Defaults to false
-  // * @param {String} opts.signingMethod - Optional. If set, force signing method (ecdsa or schnorr) otherwise use default for coin
+  // * @param {String} opts.signingMethod - Optional. If set, force signing method (ecdsa) otherwise use default for coin
   // * @returns {Callback} cb - Return error or the transaction proposal
   // * @param {String} baseUrl - Optional. ONLY FOR TESTING
   // */
@@ -1391,11 +1389,6 @@ export class API extends EventEmitter {
     );
     $.checkState(this.credentials.sharedEncryptingKey);
     $.checkArgument(opts);
-
-    // BCH schnorr deployment
-    if (!opts.signingMethod && this.credentials.coin == 'bch') {
-      opts.signingMethod = 'schnorr';
-    }
 
     var args = this._getCreateTxProposalArgs(opts);
     baseUrl = baseUrl || '/v3/txproposals/';
@@ -2702,21 +2695,12 @@ export class API extends EventEmitter {
       let opts = [
         // coin, network,  multisig
         ['btc', 'livenet'],
-        ['bch', 'livenet'],
-        ['btc', 'livenet', true],
-        ['bch', 'livenet', true]
+        ['btc', 'livenet', true]
       ];
       if (key.use44forMultisig) {
         //  testing old multi sig
         opts = opts.filter(x => {
           return x[2];
-        });
-      }
-
-      if (key.use0forBCH) {
-        //  testing BCH, old coin=0 wallets
-        opts = opts.filter(x => {
-          return x[0] == 'bch';
         });
       }
 
@@ -2755,7 +2739,6 @@ export class API extends EventEmitter {
 
             // Accounts not allowed?
             if (
-              key.use0forBCH ||
               !key.compliantDerivation ||
               key.use44forMultisig ||
               key.BIP45
@@ -2803,24 +2786,11 @@ export class API extends EventEmitter {
         useLegacyPurpose: false
       },
       {
-        // older bch wallets: /[44,48]/[0,0]'/
-        nonCompliantDerivation: false,
-        useLegacyCoinType: true,
-        useLegacyPurpose: false
-      },
-      {
-        // older BTC/BCH  multisig wallets: /[44]/[0,145]'/
+        // older BTC  multisig wallets: /[44]/[0,145]'/
         nonCompliantDerivation: false,
         useLegacyCoinType: false,
         useLegacyPurpose: true
       },
-      {
-        // not that // older multisig BCH wallets: /[44]/[0]'/
-        nonCompliantDerivation: false,
-        useLegacyCoinType: true,
-        useLegacyPurpose: true
-      },
-
       {
         // old BTC no-comp wallets: /44'/[0]'/
         nonCompliantDerivation: true,

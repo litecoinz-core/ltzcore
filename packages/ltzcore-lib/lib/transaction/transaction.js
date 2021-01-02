@@ -1172,7 +1172,7 @@ Transaction.prototype.removeInput = function(txId, outputIndex) {
  *
  * @param {Array|String|PrivateKey} privateKey
  * @param {number} sigtype
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr'
+ * @param {String} signingMethod - method used to sign - 'ecdsa'
  * @return {Transaction} this, for chaining
  */
 Transaction.prototype.sign = function(privateKey, sigtype, signingMethod) {
@@ -1246,7 +1246,7 @@ Transaction.prototype.isValidSignature = function(signature, signingMethod) {
 };
 
 /**
- * @param {String} signingMethod method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod method used to sign - 'ecdsa' (future signing method)
  * @returns {bool} whether the signature is valid for this transaction input
  */
 Transaction.prototype.verifySignature = function(sig, pubkey, nin, subscript, sigversion, satoshis, signingMethod) {

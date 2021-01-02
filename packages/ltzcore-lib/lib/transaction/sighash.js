@@ -98,7 +98,7 @@ var sighash = function sighash(transaction, sighashType, inputNumber, subscript)
  * @param {number} sighash
  * @param {number} inputIndex
  * @param {Script} subscript
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod - method used to sign - 'ecdsa' (future signing method)
  * @return {Signature}
  */
 function sign(transaction, privateKey, sighashType, inputIndex, subscript, signingMethod) {
@@ -108,10 +108,10 @@ function sign(transaction, privateKey, sighashType, inputIndex, subscript, signi
   if(signingMethod === 'ecdsa') {
     var hashbuf = sighash(transaction, sighashType, inputIndex, subscript);
     sig = ECDSA.sign(hashbuf, privateKey, 'little').set({
-    nhashtype: sighashType
-  });
-  return sig;
- }
+      nhashtype: sighashType
+    });
+    return sig;
+  }
   throw new Error("signingMethod not supported ", signingMethod);
 }
 
@@ -124,7 +124,7 @@ function sign(transaction, privateKey, sighashType, inputIndex, subscript, signi
  * @param {PublicKey} publicKey
  * @param {number} inputIndex
  * @param {Script} subscript
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr'
+ * @param {String} signingMethod - method used to sign - 'ecdsa'
  * @return {boolean}
  */
 function verify(transaction, signature, publicKey, inputIndex, subscript, signingMethod) {

@@ -44,13 +44,13 @@ describe('Fiat rate service', function() {
 
   describe('#getRate', function() {
     it('should get current rate', function(done) {
-      service.storage.storeFiatRate('bch', [{
+      service.storage.storeFiatRate('btc', [{
         code: 'USD',
         value: 123.45,
       }], function(err) {
         should.not.exist(err);
         service.getRate({
-          coin: 'bch',
+          coin: 'btc',
           code: 'USD',
         }, function(err, res) {
           should.not.exist(err);
@@ -76,35 +76,6 @@ describe('Fiat rate service', function() {
             should.not.exist(err);
             res.rate.should.equal(345.67);
             done();
-          });
-        });
-      });
-    });
-
-    it('should get current rate for different coin', function(done) {
-      service.storage.storeFiatRate('btc', [{
-        code: 'USD',
-        value: 100.00,
-      }], function(err) {
-        should.not.exist(err);
-        service.storage.storeFiatRate('bch', [{
-          code: 'USD',
-          value: 200.00,
-        }], function(err) {
-          should.not.exist(err);
-          service.getRate({
-            code: 'USD',
-          }, function(err, res) {
-            should.not.exist(err);
-            res.rate.should.equal(100.00, 'Should use default coin');
-            service.getRate({
-              code: 'USD',
-              coin: 'bch',
-            }, function(err, res) {
-              should.not.exist(err);
-              res.rate.should.equal(200.00);
-              done();
-            });
           });
         });
       });
@@ -182,7 +153,7 @@ describe('Fiat rate service', function() {
     });
 
     it('should get historical rates from ts to now', function(done) {
-      const coins = ['btc', 'bch'];
+      const coins = ['btc'];
       var clock = sinon.useFakeTimers({toFake: ['Date']});
       async.each([1.00, 2.00, 3.00, 4.00], function(value, next) {
         clock.tick(100);
@@ -251,7 +222,6 @@ describe('Fiat rate service', function() {
           should.not.exist(err);
           should.exist(res);
           res['btc'].length.should.equal(4);
-          should.not.exist(res['bch']);
 
           res['btc'][3].ts.should.equal(100);
           res['btc'][3].rate.should.equal(1.00);
@@ -271,7 +241,7 @@ describe('Fiat rate service', function() {
     });
 
     it('should return current rates if missing opts.ts when fetching historical rates', function(done) {
-      const coins = ['btc', 'bch'];
+      const coins = ['btc'];
       var clock = sinon.useFakeTimers({toFake: ['Date']});
       async.each([1.00, 2.00, 3.00, 4.00], function(value, next) {
         clock.tick(11 * 60 * 1000);
@@ -347,22 +317,11 @@ describe('Fiat rate service', function() {
         code: 'EUR',
         rate: 234.56,
       }];
-      var bch = [{
-        code: 'USD',
-        rate: 120,
-      }, {
-        code: 'EUR',
-        rate: 120,
-      }];
 
       request.get.withArgs({
         url: 'https://bitpay.com/api/rates/BTC',
         json: true
       }).yields(null, null, btc);
-      request.get.withArgs({
-        url: 'https://bitpay.com/api/rates/BCH',
-        json: true
-      }).yields(null, null, bch);
 
       service._fetch(function(err) {
         should.not.exist(err);
@@ -373,21 +332,14 @@ describe('Fiat rate service', function() {
           res.fetchedOn.should.equal(100);
           res.rate.should.equal(123.45);
           service.getRate({
-            code: 'USD',
-            coin: 'bch',
+            code: 'EUR',
+            coin: 'btc'
           }, function(err, res) {
             should.not.exist(err);
             res.fetchedOn.should.equal(100);
-            res.rate.should.equal(120.00);
-            service.getRate({
-              code: 'EUR'
-            }, function(err, res) {
-              should.not.exist(err);
-              res.fetchedOn.should.equal(100);
-              res.rate.should.equal(234.56);
-              clock.restore();
-              done();
-            });
+            res.rate.should.equal(234.56);
+            clock.restore();
+            done();
           });
         });
       });
@@ -395,58 +347,6 @@ describe('Fiat rate service', function() {
   });
 
   describe('#getRates', function() {
-    const bchRates = [
-      { code: "USD", value: 268.94 },
-      { code: "INR", value: 19680.35 },
-      { code: "EUR", value: 226.37 },
-      { code: "CAD", value: 352.33 },
-      { code: "COP", value: 1026617.26 },
-      { code: "NGN", value: 104201.93 },
-      { code: "GBP", value: 201.62 },
-      { code: "ARS", value: 19900.21 },
-      { code: "AUD", value: 365.8 },
-      { code: "BRL", value: 1456.93 },
-      { code: "JPY", value: 1124900.43 },
-      { code: "NZD", value: 16119.66 }
-    ]
-    it('should get rates for all the supported fiat currencies of the specified coin', function(done) {
-      service.storage.storeFiatRate('bch', bchRates, function(err) {
-        should.not.exist(err);
-        service.getRates({
-          coin: 'bch'
-        }, function(err, res) {
-          should.not.exist(err);
-          res.length.should.equal(bchRates.length);
-          done();
-        });
-      });
-    });
-    it('should get rate for the specified coin and currency if they are supported', function(done) {
-      service.storage.storeFiatRate('bch', bchRates, function(err) {
-        should.not.exist(err);
-        service.getRates({
-          coin: 'bch',
-          code: 'EUR'
-        }, function(err, res) {
-          should.not.exist(err);
-          res[0].rate.should.equal(226.37);
-          done();
-        });
-      });
-    });
-    it('should throw error if the specified currency code is not supported', function(done) {
-      service.storage.storeFiatRate('bch', bchRates, function(err) {
-        should.not.exist(err);
-        service.getRates({
-          coin: 'bch',
-          code: 'AOA'
-        }, function(err) {
-          should.exist(err);
-          err.should.equal('AOA is not supported');
-          done();
-        });
-      });
-    });
     it('should get rate for specific ts', function(done) {
       var clock = sinon.useFakeTimers({ toFake: ['Date'] });
       clock.tick(20);

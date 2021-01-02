@@ -10,8 +10,7 @@ const $ = require('preconditions').singleton();
 const Common = require('../common');
 const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('ltzcore-lib-cash')
+  btc: Ltzcore
 };
 const config = require('../../config');
 const Constants = Common.Constants,
@@ -31,8 +30,6 @@ export class V8 {
   coin: string;
   network: string;
   v8network: string;
-  // v8 is always cashaddr
-  addressFormat: string;
   apiPrefix: string;
   host: string;
   userAgent: string;
@@ -53,8 +50,6 @@ export class V8 {
     this.network = opts.network || 'livenet';
     this.v8network = v8network(this.network);
 
-    // v8 is always cashaddr
-    this.addressFormat = this.coin == 'bch' ? 'cashaddr' : null;
     this.apiPrefix += `/${this.chain}/${this.v8network}`;
 
     this.host = opts.url;

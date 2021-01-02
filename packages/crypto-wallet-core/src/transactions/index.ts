@@ -1,9 +1,7 @@
-import { BCHTxProvider } from './bch';
 import { BTCTxProvider } from './btc';
 
 const providers = {
-  BTC: new BTCTxProvider(),
-  BCH: new BCHTxProvider()
+  BTC: new BTCTxProvider()
 };
 
 export class TransactionsProxy {

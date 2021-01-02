@@ -397,22 +397,6 @@ describe('Key', function() {
       cred.addressType.should.equal('P2PKH');
       cred.rootPath.should.equal("m/44'/1'/0'");
     });
-
-    it('should create 2-2 credentials', function() {
-      var c = new Key({ seedType: 'extendedPrivateKey', seedData: 'xprv9s21ZrQH143K3zLpjtB4J4yrRfDTEfbrMa9vLZaTAv5BzASwBmA16mdBmZKpMLssw1AzTnm31HAD2pk2bsnZ9dccxaLD48mRdhtw82XoiBi' });
-      var cred = c.createCredentials(null, {
-        coin: 'bch',
-        network: 'livenet',
-        account: 1,
-        n: 2,
-        nonCompliantDerivation: true
-      });
-      cred.account.should.equal(1);
-      cred.addressType.should.equal('P2SH');
-      cred.n.should.equal(2);
-      cred.rootPath.should.equal("m/48'/145'/1'");
-      c.compliantDerivation.should.equal(true);
-    });
   });
 
   describe('#getBaseAddressDerivationPath', function() {
@@ -449,7 +433,7 @@ describe('Key', function() {
   });
 
   describe('#createCredentials 2', function() {
-    it('should return different copayerId for different coin / accounts', function() {
+    it('should return different copayerId for different accounts', function() {
       var k = new Key({ seedType: 'extendedPrivateKey', seedData: 'xprv9s21ZrQH143K3zLpjtB4J4yrRfDTEfbrMa9vLZaTAv5BzASwBmA16mdBmZKpMLssw1AzTnm31HAD2pk2bsnZ9dccxaLD48mRdhtw82XoiBi' });
 
       let c = k.createCredentials(null, {
@@ -464,15 +448,8 @@ describe('Key', function() {
         network: 'livenet',
         n: 1
       });
-      let c2 = k.createCredentials(null, {
-        coin: 'bch',
-        account: 1,
-        network: 'livenet',
-        n: 1
-      });
       c.copayerId.should.equal('4abffe3e0e52a4cec11ebf966675cb526566919a8a0d5de36d9b2898ee804a58');
       c1.copayerId.should.equal('911867838cffffc2bbd05e519f1932d56c49b93a908136ce7a17b70573c1c428');
-      c2.copayerId.should.equal('dc9577aa5054563f31047463e25ec52f96c5b1fa93c4b567f2329eb6a66517d0');
     });
 
     it('should return different copayerId for different network', function() {

@@ -1,16 +1,16 @@
 # Modules
 Modules are loaded before services are started. This allows code to hook into services and register classes, event handlers, etc that alter the behaviors of services.
 
-## Example - Syncing BCH
-Let's say we have a node_module, named `ltzcore-node-bch` with the following code
+## Example - Syncing BTC
+Let's say we have a node_module, named `ltzcore-node` with the following code
 
 ```
 // index.js
 
-module.exports = class BitcoinCashModule {
+module.exports = class BitcoinModule {
   constructor(services) {
-    services.Libs.register('BCH', 'ltzcore-lib-cash', 'ltzcore-p2p-cash');
-    services.P2P.register('BCH', services.P2P.get('BTC'));
+    services.Libs.register('BTC', 'ltzcore-lib', 'ltzcore-p2p');
+    services.P2P.register('BTC', services.P2P.get('BTC'));
   }
 }
 ```
@@ -20,14 +20,14 @@ The module has the following dependencies
 // package.json
 
   "dependencies": {
-    "ltzcore-lib-cash": "^8.3.4",
-    "ltzcore-p2p-cash": "^8.3.4"
+    "ltzcore-lib": "^8.23.1",
+    "ltzcore-p2p": "^8.23.1"
   }
 
 ```
 
-We could add this module by adding `ltzcore-node-bch` to the modules array in ltzcore.config.json
+We could add this module by adding `ltzcore-node` to the modules array in ltzcore.config.json
 
 ```
-    modules: ['./bitcoin', 'ltzcore-node-bch'],
+    modules: ['./bitcoin', 'ltzcore-node'],
 ```

@@ -23,7 +23,6 @@
     "abi-decoder": "2.0.1",
     "async": "^0.9.2",
     "ltzcore-lib": "^8.23.1",
-    "ltzcore-lib-cash": "^8.23.1",
     "body-parser": "^1.11.0",
     "compression": "^1.6.2",
     "crypto-wallet-core": "^8.23.1",

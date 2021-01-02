@@ -39,7 +39,6 @@ export class Credentials {
     'addressType',
     'hwInfo', // Obsolete
     'entropySourcePath', // Obsolete
-    'use145forBCH', // Obsolete
     'version',
     'rootPath', // this is only for information
     'keyId' // this is only for information
@@ -60,7 +59,6 @@ export class Credentials {
   derivationStrategy: any;
   network: string;
   coin: string;
-  use145forBCH: any;
 
   addressType: string;
   keyId: string;
@@ -155,12 +153,6 @@ export class Credentials {
         Constants.UTXO_COINS.includes(this.coin)
       ) {
         coin = '1';
-      } else if (this.coin == 'bch') {
-        if (this.use145forBCH) {
-          coin = '145';
-        } else {
-          coin = '0';
-        }
       } else if (this.coin == 'btc') {
         coin = '0';
       } else {
@@ -263,11 +255,7 @@ export class Credentials {
 
   isComplete() {
     if (!this.m || !this.n) return false;
-    if (
-      (this.coin === 'btc' || this.coin === 'bch') &&
-      (!this.publicKeyRing || this.publicKeyRing.length != this.n)
-    )
-      return false;
+    if (!this.publicKeyRing || this.publicKeyRing.length != this.n) return false;
     return true;
   }
 }

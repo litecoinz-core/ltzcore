@@ -21,15 +21,7 @@ export class PriceProvider {
     }
 
     if (currency === 'USD') {
-      let ratesAPI;
-      switch (this.api.getConfig().chain) {
-        case 'BTC':
-          ratesAPI = this.api.ratesAPI.btc;
-          break;
-        case 'BCH':
-          ratesAPI = this.api.ratesAPI.bch;
-          break;
-      }
+      let ratesAPI = this.api.ratesAPI.btc;
       this.api.httpClient.get(ratesAPI).subscribe(
         (data: any) => {
           const currencyParsed: any = data;

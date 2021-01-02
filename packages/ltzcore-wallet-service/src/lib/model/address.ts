@@ -38,8 +38,7 @@ export class Address {
   beRegistered: boolean;
 
   static Ltzcore = {
-    btc: require('ltzcore-lib'),
-    bch: require('ltzcore-lib-cash')
+    btc: require('ltzcore-lib')
   };
 
   static create(opts) {
@@ -84,7 +83,7 @@ export class Address {
     return x;
   }
 
-  static _deriveAddress(scriptType, publicKeyRing, path, m, coin, network, noNativeCashAddr) {
+  static _deriveAddress(scriptType, publicKeyRing, path, m, coin, network) {
     $.checkArgument(Utils.checkValueInCollection(scriptType, Constants.SCRIPT_TYPES));
 
     const publicKeys = _.map(publicKeyRing, item => {
@@ -128,22 +127,15 @@ export class Address {
         break;
     }
 
-    let addrStr = ltzcoreAddress.toString(true);
-    if (noNativeCashAddr && coin == 'bch') {
-      addrStr = ltzcoreAddress.toLegacyAddress();
-    }
-
     return {
-      // bws still use legacy addresses for BCH
-      address: addrStr,
+      address: ltzcoreAddress.toString(true),
       path,
       publicKeys: _.invokeMap(publicKeys, 'toString')
     };
   }
 
-  // noNativeCashAddr only for testing
-  static derive(walletId, scriptType, publicKeyRing, path, m, coin, network, isChange, noNativeCashAddr = false) {
-    const raw = Address._deriveAddress(scriptType, publicKeyRing, path, m, coin, network, noNativeCashAddr);
+  static derive(walletId, scriptType, publicKeyRing, path, m, coin, network, isChange) {
+    const raw = Address._deriveAddress(scriptType, publicKeyRing, path, m, coin, network);
     return Address.create(
       _.extend(raw, {
         coin,

@@ -816,7 +816,7 @@ export class BtcChain implements IChain {
     const A = this.ltzcoreLib.Address;
     let addr: {
       network?: string;
-      toString?: (cashAddr: boolean) => string;
+      toString?: () => string;
     } = {};
     try {
       addr = new A(inaddr);

@@ -70,10 +70,6 @@ describe('Email notifications', function() {
                   btc: {
                     livenet: 'https://insight.bitpay.com/tx/{{txid}}',
                     testnet: 'https://test-insight.bitpay.com/tx/{{txid}}',
-                  },
-                  bch: {
-                    livenet: 'https://bch-insight.bitpay.com/#/tx/{{txid}}',
-                    testnet: 'https://test-bch-insight.bitpay.com/#/tx/{{txid}}',
                   }
                 },
               },
@@ -573,10 +569,6 @@ describe('Email notifications', function() {
                   btc: {
                     livenet: 'https://insight.bitpay.com/tx/{{txid}}',
                     testnet: 'https://test-insight.bitpay.com/tx/{{txid}}',
-                  },
-                  bch: {
-                    livenet: 'https://bch-insight.bitpay.com/#/tx/{{txid}}',
-                    testnet: 'https://test-bch-insight.bitpay.com/#/tx/{{txid}}',
                   }
                 },
               },
@@ -610,7 +602,7 @@ describe('Email notifications', function() {
 
   describe('1-1 wallet', function() {
     beforeEach(function(done) {
-        helpers.createAndJoinWallet(1, 1,  {coin:'bch'}, function(s, w) {
+        helpers.createAndJoinWallet(1, 1,  {coin:'btc'}, function(s, w) {
           server = s;
           wallet = w;
 
@@ -643,10 +635,6 @@ describe('Email notifications', function() {
                   btc: {
                     livenet: 'https://insight.bitpay.com/tx/{{txid}}',
                     testnet: 'https://test-insight.bitpay.com/tx/{{txid}}',
-                  },
-                  bch: {
-                    livenet: 'https://bch-insight.bitpay.com/#/tx/{{txid}}',
-                    testnet: 'https://test-bch-insight.bitpay.com/#/tx/{{txid}}',
                   }
                 },
               },
@@ -655,39 +643,6 @@ describe('Email notifications', function() {
               done();
             });
           });
-      });
-    });
-
-
-
-    it('should handle small incomming payments (bch)', function(done) {
-      server.createAddress({}, function(err, address) {
-        should.not.exist(err);
-
-        // Simulate incoming tx notification
-        server._notify('NewIncomingTx', {
-          txid: '999',
-          address: address,
-          amount: 221340,
-        }, function(err) {
-          setTimeout(function() {
-            var calls = mailerStub.send.getCalls();
-            calls.length.should.equal(1);
-            var emails = _.map(calls, function(c) {
-              return c.args[0];
-            });
-            _.difference(['copayer1@domain.com'], _.map(emails, 'to')).should.be.empty;
-            var one = emails[0];
-            one.from.should.equal('bws@dummy.net');
-            one.subject.should.contain('New payment received');
-            one.text.should.contain('0.002213 BCH');
-            server.storage.fetchUnsentEmails(function(err, unsent) {
-              should.not.exist(err);
-              unsent.should.be.empty;
-              done();
-            });
-          }, 100);
-        });
       });
     });
   });

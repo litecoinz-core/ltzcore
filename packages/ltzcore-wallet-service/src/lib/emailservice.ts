@@ -240,8 +240,7 @@ export class EmailService {
     // TODO: Declare these in BWU
     const UNIT_LABELS = {
       btc: 'BTC',
-      bit: 'bits',
-      bch: 'BCH'
+      bit: 'bits'
     };
 
     const data = _.cloneDeep(notification.data);

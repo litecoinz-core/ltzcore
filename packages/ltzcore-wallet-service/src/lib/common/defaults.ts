@@ -47,14 +47,6 @@ module.exports = {
         nbBlocks: 24,
         defaultValue: 10000
       }
-    ],
-    bch: [
-      {
-        name: 'normal',
-        nbBlocks: 2,
-        multiplier: 1.05, // To fix fees < 1sat/byte
-        defaultValue: 2000
-      }
     ]
   },
 
@@ -158,20 +150,15 @@ module.exports = {
 
   MAX_TX_SIZE_IN_KB_BTC: 100,
 
-  MAX_TX_SIZE_IN_KB_BCH: 100,
-
   MAX_FEE_PER_KB: {
-    btc: 10000 * 1000, // 10k sat/b
-    bch: 10000 * 1000  // 10k sat/b
+    btc: 10000 * 1000 // 10k sat/b
   },
 
   MIN_TX_FEE: {
-    btc: 0,
-    bch: 0
+    btc: 0
   },
 
   MAX_TX_FEE: {
-    btc: 0.05 * 1e8,
-    bch: 0.05 * 1e8
+    btc: 0.05 * 1e8
   },
 };

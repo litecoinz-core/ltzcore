@@ -10,10 +10,6 @@ const PROVIDERS = {
     btc: {
       livenet: 'https://api.bitpay.com',
       testnet: 'https://api.bitpay.com'
-    },
-    bch: {
-      livenet: 'https://api.bitpay.com',
-      testnet: 'https://api.bitpay.com'
     }
   }
 };
@@ -35,10 +31,6 @@ export function BlockChainExplorer(opts) {
 
   const url = opts.url || PROVIDERS[provider][coin][network];
 
-  if (coin != 'bch' && opts.addressFormat) throw new Error('addressFormat only supported for bch');
-
-  if (coin == 'bch' && !opts.addressFormat) opts.addressFormat = 'cashaddr';
-
   switch (provider) {
     case 'v8':
       return new V8({
@@ -46,8 +38,7 @@ export function BlockChainExplorer(opts) {
         network,
         url,
         apiPrefix: opts.apiPrefix,
-        userAgent: opts.userAgent,
-        addressFormat: opts.addressFormat
+        userAgent: opts.userAgent
       });
 
     default:

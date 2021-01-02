@@ -35,9 +35,6 @@ COPY  ./packages/ltzcore-client/package-lock.json ./packages/ltzcore-client/pack
 COPY  ./packages/ltzcore-build/package.json ./packages/ltzcore-build/package.json
 COPY  ./packages/ltzcore-build/package-lock.json ./packages/ltzcore-build/package-lock.json
 
-COPY  ./packages/ltzcore-lib-cash/package.json ./packages/ltzcore-lib-cash/package.json
-COPY  ./packages/ltzcore-lib-cash/package-lock.json ./packages/ltzcore-lib-cash/package-lock.json
-
 COPY  ./packages/ltzcore-lib/package.json ./packages/ltzcore-lib/package.json
 COPY  ./packages/ltzcore-lib/package-lock.json ./packages/ltzcore-lib/package-lock.json
 
@@ -46,9 +43,6 @@ COPY  ./packages/ltzcore-mnemonic/package-lock.json ./packages/ltzcore-mnemonic/
 
 COPY  ./packages/ltzcore-node/package.json ./packages/ltzcore-node/package.json
 COPY  ./packages/ltzcore-node/package-lock.json ./packages/ltzcore-node/package-lock.json
-
-COPY  ./packages/ltzcore-p2p-cash/package.json ./packages/ltzcore-p2p-cash/package.json
-COPY  ./packages/ltzcore-p2p-cash/package-lock.json ./packages/ltzcore-p2p-cash/package-lock.json
 
 COPY  ./packages/ltzcore-p2p/package.json ./packages/ltzcore-p2p/package.json
 COPY  ./packages/ltzcore-p2p/package-lock.json ./packages/ltzcore-p2p/package-lock.json

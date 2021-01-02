@@ -66,7 +66,7 @@ PublicKeyHashInput.prototype.getSighash = function(transaction, privateKey, inde
  * @param {number} index - the index of the input in the transaction input vector
  * @param {number=} sigtype - the type of signature, defaults to Signature.SIGHASH_ALL
  * @param {Buffer=} hashData - the precalculated hash of the public key associated with the privateKey provided
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod - method used to sign - 'ecdsa' (future signing method)
  * @return {Array} of objects that can be
  */
 PublicKeyHashInput.prototype.getSignatures = function(transaction, privateKey, index, sigtype, hashData, signingMethod) {
@@ -112,7 +112,7 @@ PublicKeyHashInput.prototype.getSignatures = function(transaction, privateKey, i
  * @param {PublicKey} signature.publicKey
  * @param {Signature} signature.signature
  * @param {number=} signature.sigtype
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod - method used to sign - 'ecdsa' (future signing method)
  * @return {PublicKeyHashInput} this, for chaining
  */
 PublicKeyHashInput.prototype.addSignature = function(transaction, signature, signingMethod) {

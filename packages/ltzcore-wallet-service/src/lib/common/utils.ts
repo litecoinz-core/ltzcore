@@ -7,8 +7,7 @@ const crypto = ltzcore.crypto;
 const secp256k1 = require('secp256k1');
 const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('ltzcore-lib-cash')
+  btc: Ltzcore
 };
 
 export class Utils {
@@ -235,12 +234,7 @@ export class Utils {
       new Ltzcore_['btc'].Address(address);
       return 'btc';
     } catch (e) {
-      try {
-        new Ltzcore_['bch'].Address(address);
-        return 'bch';
-      } catch (e) {
-        return;
-      }
+      return;
     }
   }
 
@@ -250,7 +244,7 @@ export class Utils {
     const origObj = origAddress.toObject();
 
     const result = Ltzcore_[coin].Address.fromObject(origObj);
-    return coin == 'bch' ? result.toLegacyAddress() : result.toString();
+    return result.toString();
   }
 }
 module.exports = Utils;

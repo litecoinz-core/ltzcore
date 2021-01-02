@@ -328,8 +328,7 @@ export class PushNotificationsService {
   _getDataForTemplate(notification: INotification, recipient, cb) {
     const UNIT_LABELS = {
       btc: 'BTC',
-      bit: 'bits',
-      bch: 'BCH'
+      bit: 'bits'
     };
     const data = _.cloneDeep(notification.data);
     data.subjectPrefix = _.trim(this.subjectPrefix + ' ');

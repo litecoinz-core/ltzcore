@@ -28,8 +28,7 @@ tmp.compressed = false;
 const pubKey = Ltzcore.PrivateKey(tmp).toPublicKey();
 
 const BASE = {
-  BTC: `https://api.bitcore.io/api/${coin}/${network}`,
-  BCH: `https://api.bitcore.io/api/${coin}/${network}`
+  BTC: `https://api.bitcore.io/api/${coin}/${network}`
 };
 
 let baseUrl = BASE[coin];

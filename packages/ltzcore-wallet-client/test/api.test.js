@@ -19,8 +19,7 @@ var CWC = require('crypto-wallet-core');
 
 var Ltzcore = CWC.LtzcoreLib;
 var Ltzcore_ = {
-  btc: Ltzcore,
-  bch: CWC.LtzcoreLibCash
+  btc: Ltzcore
 };
 
 var BWS = require('ltzcore-wallet-service');
@@ -301,7 +300,7 @@ blockchainExplorerMock.broadcast = (raw, cb) => {
     throw 'no bitcoin';
   }
   let hash = tx.id;
-  // btc/bch
+  // btc
   return cb(null, hash);
 };
 
@@ -1433,106 +1432,6 @@ describe('client API', function() {
           '3045022100951f980ad2fcd764a7824575e18aa4f28309b7160c353a0e3d239bff83050184022039c4ab5be5c40d19cd2c8bfcbf42a6262df851454a494ad78668be7d35519f05'
         );
       });
-
-      it('should sign BCH proposal correctly', () => {
-        var toAddress = 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx';
-        var changeAddress = 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx';
-
-        var publicKeyRing = [
-          {
-            xPubKey: new Ltzcore.HDPublicKey(derivedPrivateKey['BIP44'])
-          }
-        ];
-
-        var utxos = helpers.generateUtxos('P2PKH', publicKeyRing, 'm/1/0', 1, [1000, 2000]);
-        var txp = {
-          version: 3,
-          coin: 'bch',
-          signingMethod: 'ecdsa',
-          inputs: utxos,
-          outputs: [
-            {
-              toAddress: toAddress,
-              amount: 800,
-              message: 'first output'
-            },
-            {
-              toAddress: toAddress,
-              amount: 900,
-              message: 'second output'
-            }
-          ],
-          changeAddress: {
-            address: changeAddress
-          },
-          requiredSignatures: 1,
-          outputOrder: [0, 1, 2],
-          fee: 10000,
-          derivationStrategy: 'BIP44',
-          addressType: 'P2PKH'
-        };
-        var path = "m/44'/1'/0'";
-        var key = new Key({ seedData: masterPrivateKey, seedType: 'extendedPrivateKey' });
-        var signatures = key.sign(path, txp);
-
-        signatures.length.should.be.equal(utxos.length);
-        signatures[0].should.equal(
-          '304402200aa70dfe99e25792c4a7edf773477100b6659f1ba906e551e6e5218ec32d273402202e31c575edb55b2da824e8cafd02b4769017ef63d3c888718cf6f0243c570d41'
-        );
-        signatures[1].should.equal(
-          '3045022100afde45e125f654453493b40d288cd66e8a011c66484509ae730a2686c9dff30502201bf34a6672c5848dd010b89ea1a5f040731acf78fec062f61b305e9ce32798a5'
-        );
-      });
-
-      it('should sign BCH proposal correctly (schnorr)', () => {
-        var toAddress = 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx';
-        var changeAddress = 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx';
-
-        var publicKeyRing = [
-          {
-            xPubKey: new Ltzcore.HDPublicKey(derivedPrivateKey['BIP44'])
-          }
-        ];
-
-        var utxos = helpers.generateUtxos('P2PKH', publicKeyRing, 'm/1/0', 1, [1000, 2000]);
-        var txp = {
-          version: 3,
-          coin: 'bch',
-          signingMethod: 'schnorr',
-          inputs: utxos,
-          outputs: [
-            {
-              toAddress: toAddress,
-              amount: 800,
-              message: 'first output'
-            },
-            {
-              toAddress: toAddress,
-              amount: 900,
-              message: 'second output'
-            }
-          ],
-          changeAddress: {
-            address: changeAddress
-          },
-          requiredSignatures: 1,
-          outputOrder: [0, 1, 2],
-          fee: 10000,
-          derivationStrategy: 'BIP44',
-          addressType: 'P2PKH'
-        };
-        var path = "m/44'/1'/0'";
-        var key = new Key({ seedData: masterPrivateKey, seedType: 'extendedPrivateKey' });
-        var signatures = key.sign(path, txp);
-
-        signatures.length.should.be.equal(utxos.length);
-        signatures[0].should.equal(
-          '8127bbe9a3627fb307c3e919a2dd2dd69b22aaaa363abbda1d44a305fc8ec98ae082f3c3439c54c49ab20e6cc4ad0a077750583758de5a09b1d50d91befe30de'
-        );
-        signatures[1].should.equal(
-          '6b1494a6e8121215f40268f58b728585589c6933844b9bbcdae3fdd69be7c000d72c06143f554c5f9fd858a14e9d11cbb7c141901d8fc701c1f3c8c7328d6dc7'
-        );
-      });
     });
   });
 
@@ -1543,7 +1442,7 @@ describe('client API', function() {
         var walletId = Uuid.v4();
         var walletPrivKey = new Ltzcore.PrivateKey();
         var network = i % 2 == 0 ? 'testnet' : 'livenet';
-        var coin = i % 3 == 0 ? 'bch' : 'btc';
+        var coin = 'btc';
         var secret = Client._buildSecret(walletId, walletPrivKey, coin, network);
         var result = Client.parseSecret(secret);
         result.walletId.should.equal(walletId);
@@ -2408,71 +2307,6 @@ describe('client API', function() {
       );
     });
 
-    it('should create Bitcoin Cash wallet', done => {
-      let k = new Key({ seedType:'new'});
-      clients[0].fromString(
-        k.createCredentials(null, {
-          coin: 'bch',
-          network: 'livenet',
-          account: 0,
-          n: 1
-        })
-      );
-
-      clients[0].createWallet(
-        'mycashwallet',
-        'pepe',
-        1,
-        1,
-        {
-          coin: 'bch'
-        },
-        (err, secret) => {
-          should.not.exist(err);
-          clients[0].getStatus({}, (err, status) => {
-            should.not.exist(err);
-            status.wallet.coin.should.equal('bch');
-            done();
-          });
-        }
-      );
-    });
-
-    it('should create a BCH  address correctly', done => {
-      var xPriv =
-        'xprv9s21ZrQH143K3GJpoapnV8SFfukcVBSfeCficPSGfubmSFDxo1kuHnLisriDvSnRRuL2Qrg5ggqHKNVpxR86QEC8w35uxmGoggxtQTPvfUu';
-      let k = new Key({ seedData: xPriv, useLegacyCoinType: true, seedType: 'extendedPrivateKey' });
-      clients[0].fromString(
-        k.createCredentials(null, {
-          coin: 'bch',
-          network: 'livenet',
-          account: 0,
-          n: 1
-        })
-      );
-
-      clients[0].createWallet(
-        'mycashwallet',
-        'pepe',
-        1,
-        1,
-        {
-          coin: 'bch'
-        },
-        (err, secret) => {
-          should.not.exist(err);
-
-          clients[0].createAddress((err, x) => {
-            should.not.exist(err);
-            x.coin.should.equal('bch');
-            x.network.should.equal('livenet');
-            x.address.should.equal('qrvcdmgpk73zyfd8pmdl9wnuld36zh9n4gms8s0u59');
-            done();
-          });
-        }
-      );
-    });
-
     it('should create a P2WPKH wallet and derive a valid Segwit address', done => {
       helpers.createAndJoinWallet(
         clients,
@@ -2652,17 +2486,6 @@ describe('client API', function() {
         should.not.exist(err);
         should.exist(levels);
         _.difference(['priority', 'normal', 'economy'], _.map(levels, 'level')).should.be.empty;
-        done();
-      });
-    });
-    it('should get default fee levels for BCH', done => {
-      blockchainExplorerMock.setFeeLevels({});
-      clients[0].credentials = {};
-      clients[0].getFeeLevels('bch', 'livenet', (err, levels) => {
-        should.not.exist(err);
-        should.exist(levels);
-        levels[0].level.should.equal('normal');
-        levels[0].feePerKb.should.equal(2100);
         done();
       });
     });
@@ -3667,12 +3490,6 @@ describe('client API', function() {
           clients[0].createAddress((err, address) => {
             should.not.exist(err);
 
-            // TODO change createAddress to /v4/, and remove this.
-            if (coin == 'bch') {
-              address.address = Ltzcore_['bch'].Address(address.address).toString(true);
-            }
-            // ==
-
             blockchainExplorerMock.setUtxo(address, 2, 2);
             blockchainExplorerMock.setUtxo(address, 2, 2);
             blockchainExplorerMock.setUtxo(address, 1, 2, 0);
@@ -3915,438 +3732,6 @@ describe('client API', function() {
 
       it.skip('Should fail with wrong_signatures error if trying to push v3 signatures to  a v4 txp v', done => {
         var toAddress = 'n2TBMPzPECGUfcT2EByiTJ12TPZkhN2mN5';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message'
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          txp.version.should.equal(4);
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              txp.version = 3; // get v3 signatures
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(
-                publishedTxp,
-                signatures,
-                (err, txp) => {
-                  should.exist(err);
-                  err.toString().should.contain('BAD_SIGNATURES');
-                  done();
-                },
-                '/v2/txproposals/'
-              );
-            }
-          );
-        });
-      });
-    });
-
-    describe('BCH multisig', done => {
-      beforeEach(done => {
-        setup(2, 3, 'bch', 'testnet', done);
-      });
-
-      it('(BCH) two incompatible clients try to sign schnorr txp', done => {
-        var toAddress = 'qr5m6xul5nahlzczeaqkg5qe3mgt754djuug954tc3';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message'
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              publishedTxp.status.should.equal('pending');
-
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(publishedTxp, signatures, (err, txp) => {
-                should.not.exist(err);
-                let signatures2 = keys[1].sign(clients[1].getRootPath(), txp);
-                clients[1].pushSignatures(
-                  publishedTxp,
-                  signatures2,
-                  (err, txp) => {
-                    should.exist(err);
-                    err.message.should.contain('UPGRADE_NEEDED');
-                    done();
-                  },
-                  '/v1/txproposals/'
-                );
-              });
-            }
-          );
-        });
-      });
-
-      it('BCH Multisig Txp signingMethod = schnorr', done => {
-        var toAddress = 'qr5m6xul5nahlzczeaqkg5qe3mgt754djuug954tc3';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          signingMethod: 'schnorr' // forcing schnorr on BCH/livenet
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          txp.signingMethod.should.equal('schnorr');
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              publishedTxp.signingMethod.should.equal('schnorr');
-              publishedTxp.status.should.equal('pending');
-
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(
-                publishedTxp,
-                signatures,
-                (err, txp) => {
-                  should.not.exist(err);
-                  let signatures2 = keys[1].sign(clients[1].getRootPath(), txp);
-                  clients[1].pushSignatures(
-                    publishedTxp,
-                    signatures2,
-                    (err, txp) => {
-                      should.not.exist(err);
-                      txp.status.should.equal('accepted');
-                      done();
-                    },
-                    '/v2/txproposals/'
-                  );
-                },
-                '/v2/txproposals/'
-              );
-            }
-          );
-        });
-      });
-    });
-
-    describe('BCH testnet (schnorr activaton)', done => {
-      beforeEach(done => {
-        setup(1, 1, 'bch', 'testnet', done);
-      });
-
-      it('should sign a tx', done => {
-        var toAddress = 'qr5m6xul5nahlzczeaqkg5qe3mgt754djuug954tc3';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          signingMethod: 'schnorr' // forcing schnorr on BCH/livenet
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          txp.signingMethod.should.equal('schnorr');
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              publishedTxp.signingMethod.should.equal('schnorr');
-              publishedTxp.status.should.equal('pending');
-
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(publishedTxp, signatures, (err, txp) => {
-                should.not.exist(err);
-                txp.status.should.equal('accepted');
-                done();
-              });
-            }
-          );
-        });
-      });
-    });
-
-    describe('BCH', done => {
-      beforeEach(done => {
-        setup(1, 1, 'bch', 'livenet', done);
-      });
-
-      it('Should sign proposal', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          coin: 'bch'
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              publishedTxp.status.should.equal('pending');
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(publishedTxp, signatures, (err, txp) => {
-                should.not.exist(err);
-                txp.status.should.equal('accepted');
-                done();
-              });
-            }
-          );
-        });
-      });
-
-      it('Should fail with "upgrade needed" trying to sign schnorr on old clients', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          txpVersion: 3,
-          coin: 'bch'
-        };
-        clients[0].createTxProposal(
-          opts,
-          (err, txp) => {
-            should.not.exist(err);
-            should.exist(txp);
-            clients[0].publishTxProposal(
-              {
-                txp: txp
-              },
-              (err, publishedTxp) => {
-                should.not.exist(err);
-                should.exist(publishedTxp);
-                publishedTxp.status.should.equal('pending');
-                let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-                clients[0].pushSignatures(
-                  publishedTxp,
-                  signatures,
-                  (err, txp) => {
-                    err.message.should.contain('upgrade');
-                    done();
-                  },
-                  '/v1/txproposals/'
-                );
-              }
-            );
-          },
-          '/v3/txproposals'
-        );
-      });
-
-      it('Should sign proposal v3', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          txpVersion: 3,
-          coin: 'bch'
-        };
-        clients[0].createTxProposal(
-          opts,
-          (err, txp) => {
-            should.not.exist(err);
-            should.exist(txp);
-            clients[0].publishTxProposal(
-              {
-                txp: txp
-              },
-              (err, publishedTxp) => {
-                should.not.exist(err);
-                should.exist(publishedTxp);
-                publishedTxp.status.should.equal('pending');
-                let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-                clients[0].pushSignatures(
-                  publishedTxp,
-                  signatures,
-                  (err, txp) => {
-                    should.not.exist(err);
-                    txp.status.should.equal('accepted');
-                    done();
-                  },
-                  '/v2/txproposals/'
-                );
-              }
-            );
-          },
-          '/v3/txproposals'
-        );
-      });
-
-      it.skip('Should sign proposal (legacy txp version 3)', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message',
-          coin: 'bch'
-        };
-        clients[0].createTxProposal(
-          opts,
-          (err, txp) => {
-            should.not.exist(err);
-            should.exist(txp);
-            txp.version.should.equal(3);
-            clients[0].publishTxProposal(
-              {
-                txp: txp
-              },
-              (err, publishedTxp) => {
-                should.not.exist(err);
-                should.exist(publishedTxp);
-                publishedTxp.status.should.equal('pending');
-
-                let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-                clients[0].pushSignatures(publishedTxp, signatures, (err, txp) => {
-                  should.not.exist(err);
-                  txp.status.should.equal('accepted');
-                  done();
-                });
-              }
-            );
-          },
-          '/v3/txproposals'
-        );
-      });
-
-      it.skip('Should fail with need_update error if trying to sign a txp v4 on old client', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
-        var opts = {
-          outputs: [
-            {
-              amount: 1e8,
-              toAddress: toAddress
-            },
-            {
-              amount: 2e8,
-              toAddress: toAddress
-            }
-          ],
-          feePerKb: 100e2,
-          message: 'just some message'
-        };
-        clients[0].createTxProposal(opts, (err, txp) => {
-          should.not.exist(err);
-          should.exist(txp);
-          txp.version.should.equal(4);
-          clients[0].publishTxProposal(
-            {
-              txp: txp
-            },
-            (err, publishedTxp) => {
-              should.not.exist(err);
-              should.exist(publishedTxp);
-              let signatures = keys[0].sign(clients[0].getRootPath(), txp);
-              clients[0].pushSignatures(
-                publishedTxp,
-                signatures,
-                (err, txp) => {
-                  should.exist(err);
-                  err.toString().should.contain('upgrade');
-                  done();
-                },
-                '/v1/txproposals/'
-              );
-            }
-          );
-        });
-      });
-
-      it.skip('Should fail with wrong_signatures error if trying to push v3 signatures to  a v4 txp v', done => {
-        var toAddress = 'qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e';
         var opts = {
           outputs: [
             {
@@ -4874,77 +4259,6 @@ describe('client API', function() {
               script.isPublicKeyHashIn().should.equal(true);
               memo.should.be.equal(
                 'Payment request for BitPay invoice LanynqCPoL2JQb8z8s5Z3X for merchant BitPay Visa® Load (USD-USA)'
-              );
-              done();
-            });
-          });
-        });
-      });
-    });
-
-    describe('1-of-1 BCH wallet', () => {
-      beforeEach(async () => {
-        await new Promise(resolve => {
-          DATA = JSON.parse(TestData.payProJsonV2Body.bch);
-          mockRequest(Buffer.from(TestData.payProJsonV2.bch.body, 'hex'), TestData.payProJsonV2.bch.headers);
-
-          helpers.createAndJoinWallet(clients, keys, 1, 1, { coin: 'bch', network: 'livenet' }, w => {
-            clients[0].createAddress(async (err, x0) => {
-              should.not.exist(err);
-              should.exist(x0.address);
-
-              // TODO change createAddress to /v4/, and remove this.
-              //x0.address = Ltzcore_['bch'].Address(x0.address).toString(true);
-              // ======
-              blockchainExplorerMock.setUtxo(x0, 1, 2);
-              blockchainExplorerMock.setUtxo(x0, 1, 2);
-              var opts = {
-                paymentUrl: 'https://bitpay.com/i/XM8XbreRs6cnKkR3yYT6qQ',
-                chain: 'BCH',
-                currency: 'BCH'
-              };
-              try {
-                await Client.PayProV2.selectPaymentOption(opts).then(paypro => {
-                  helpers.createAndPublishTxProposal(
-                    clients[0],
-                    {
-                      toAddress: paypro.instructions[0].toAddress,
-                      amount: paypro.instructions[0].amount,
-                      message: paypro.memo,
-                      payProUrl: paypro.payProUrl
-                    },
-                    (err, x) => {
-                      should.not.exist(err);
-                      resolve();
-                    }
-                  );
-                });
-              } catch (e) {
-                console.error(e);
-              }
-            });
-          });
-        });
-      });
-
-      it('Should send the signed tx in paypro', done => {
-        clients[0].getTxProposals({}, (err, txps) => {
-          should.not.exist(err);
-          let signatures = keys[0].sign(clients[0].getRootPath(), txps[0]);
-          clients[0].pushSignatures(txps[0], signatures, (err, xx, paypro) => {
-            should.not.exist(err);
-            xx.status.should.equal('accepted');
-
-            let spy = sinon.spy(Client.PayProV2.request, 'post');
-            clients[0].broadcastTxProposal(xx, (err, zz, memo) => {
-              should.not.exist(err);
-              spy.called.should.be.true;
-              var rawTx = Buffer.from(postArgs[1].transactions[0].tx, 'hex');
-              var tx = Ltzcore_['bch'].Transaction(rawTx);
-              var script = tx.inputs[0].script;
-              script.isPublicKeyHashIn().should.equal(true);
-              memo.should.be.equal(
-                'Payment request for BitPay invoice XM8XbreRs6cnKkR3yYT6qQ for merchant BitPay Visa® Load (USD-USA)'
               );
               done();
             });
@@ -6179,91 +5493,6 @@ describe('client API', function() {
         });
       });
 
-      it('should be able to gain access to two TESTNET btc/bch 1-1 wallets from mnemonic', done => {
-        let key = new Key({ seedType: 'new' });
-        helpers.createAndJoinWallet(clients, keys, 1, 1, { key: key }, () => {
-          helpers.createAndJoinWallet(clients, keys, 1, 1, { coin: 'bch', key: key }, () => {
-            var words = keys[0].get(null, true).mnemonic;
-            var walletName = clients[0].credentials.walletName;
-            var copayerName = clients[0].credentials.copayerName;
-            clients[0].createAddress((err, addr) => {
-              should.not.exist(err);
-              should.exist(addr);
-              Client.serverAssistedImport(
-                { words },
-                {
-                  clientFactory: () => {
-                    return helpers.newClient(app);
-                  }
-                },
-                (err, k, c) => {
-                  should.not.exist(err);
-                  c.length.should.equal(2);
-                  c[0].credentials.coin.should.equal('btc');
-                  c[1].credentials.coin.should.equal('bch');
-                  c[0].credentials.copayerId.should.not.equal(c[1].credentials.copayerId);
-
-                  let recoveryClient = c[1];
-                  recoveryClient.openWallet(err => {
-                    should.not.exist(err);
-                    recoveryClient.credentials.walletName.should.equal(walletName);
-                    recoveryClient.credentials.copayerName.should.equal(copayerName);
-                    recoveryClient.getMainAddresses({}, (err, list) => {
-                      should.not.exist(err);
-                      should.exist(list);
-                      list[0].address.should.equal(addr.address);
-                      done();
-                    });
-                  });
-                }
-              );
-            });
-          });
-        });
-      });
-
-      it('should be able to gain access to two TESTNET btc/bch 1-1 wallets from mnemonic', done => {
-        let key = new Key({ seedType: 'new' });
-        helpers.createAndJoinWallet(clients, keys, 1, 1, { key: key, network: 'livenet' }, () => {
-          helpers.createAndJoinWallet(clients, keys, 1, 1, { coin: 'bch', key: key, network: 'livenet' }, () => {
-            var words = keys[0].get(null, true).mnemonic;
-            var walletName = clients[0].credentials.walletName;
-            var copayerName = clients[0].credentials.copayerName;
-            clients[0].createAddress((err, addr) => {
-              should.not.exist(err);
-              should.exist(addr);
-              Client.serverAssistedImport(
-                { words },
-                {
-                  clientFactory: () => {
-                    return helpers.newClient(app);
-                  }
-                },
-                (err, k, c) => {
-                  should.not.exist(err);
-                  c.length.should.equal(2);
-                  c[0].credentials.coin.should.equal('btc');
-                  c[1].credentials.coin.should.equal('bch');
-                  c[0].credentials.copayerId.should.not.equal(c[1].credentials.copayerId);
-                  let recoveryClient = c[1];
-                  recoveryClient.openWallet(err => {
-                    should.not.exist(err);
-                    recoveryClient.credentials.walletName.should.equal(walletName);
-                    recoveryClient.credentials.copayerName.should.equal(copayerName);
-                    recoveryClient.getMainAddresses({}, (err, list) => {
-                      should.not.exist(err);
-                      should.exist(list);
-                      list[0].address.should.equal(addr.address);
-                      done();
-                    });
-                  });
-                }
-              );
-            });
-          });
-        });
-      });
-
       it('should be able to gain access to a 1-1 wallet from mnemonic with passphrase', done => {
         let passphrase = 'xxx';
         helpers.createAndJoinWallet(clients, keys, 1, 1, { passphrase }, () => {
@@ -6321,7 +5550,6 @@ describe('client API', function() {
                 k = k.toObj();
                 k.xPrivKey.should.equal(xPrivKey);
                 k.compliantDerivation.should.equal(true);
-                k.use0forBCH.should.equal(false);
                 k.use44forMultisig.should.equal(false);
                 should.not.exist(err);
                 c.length.should.equal(1);
@@ -6360,7 +5588,6 @@ describe('client API', function() {
               },
               (err, k, c) => {
                 k.compliantDerivation.should.equal(true);
-                k.use0forBCH.should.equal(false);
                 k.use44forMultisig.should.equal(false);
                 should.not.exist(err);
                 c.length.should.equal(1);
@@ -6431,7 +5658,6 @@ describe('client API', function() {
                   should.exist(k);
                   should.exist(c[0]);
                   k.compliantDerivation.should.equal(true);
-                  k.use0forBCH.should.equal(false);
                   k.use44forMultisig.should.equal(true);
 
                   should.not.exist(err);
@@ -6485,7 +5711,6 @@ describe('client API', function() {
                   should.exist(k);
                   should.exist(c[0]);
                   k.compliantDerivation.should.equal(true);
-                  k.use0forBCH.should.equal(false);
                   k.use44forMultisig.should.equal(true);
 
                   should.not.exist(err);
@@ -6821,77 +6046,6 @@ describe('client API', function() {
           }
         );
       });
-    });
-  });
-
-  describe('Mobility, backup & restore BCH ONLY', () => {
-    var importedClient = null,
-      address;
-
-    beforeEach(() => {
-      importedClient = null;
-    });
-
-    it('should be able to restore a  useLegacyCoinType wallet', function(done) {
-      this.timeout(5000);
-
-      var check = x => {
-        x.credentials.rootPath.should.equal("m/44'/0'/0'");
-        x.credentials.xPubKey
-          .toString()
-          .should.equal(
-            'xpub6DJEsBSYZrjsrHssifihdekpoWcKRHR6WVfbyk6Hhq1HxZSDoyEvT2pMHmSnNKEvdQNmfVqn1Ef1yWgYcrnhc3mSegUCbMvVJCPLYJ1PNen'
-          );
-      };
-
-      var m = 'pink net pet stove boy receive task nephew book spawn pull regret';
-      // first create a "old" bch wallet (coin = 0).
-      //
-      let k = new Key({ seedData: m, seedType: 'mnemonic', useLegacyCoinType: true });
-      clients[0].fromString(
-        k.createCredentials(null, {
-          coin: 'bch',
-          network: 'livenet',
-          account: 0,
-          n: 1
-        })
-      );
-      clients[0].createWallet(
-        'mywallet',
-        'creator',
-        1,
-        1,
-        {
-          coin: 'bch',
-          network: 'livenet'
-        },
-        (err, secret) => {
-          should.not.exist(err);
-          clients[0].createAddress((err, x) => {
-            should.not.exist(err);
-            address = x.address;
-            var importedClient = helpers.newClient(app);
-            importedClient.fromString(
-              k.createCredentials(null, {
-                coin: 'bch',
-                network: 'livenet',
-                account: 0,
-                n: 1
-              })
-            );
-            var spy = sinon.spy(importedClient, 'openWallet');
-            importedClient.openWallet(err => {
-              should.not.exist(err);
-              check(importedClient);
-              importedClient.getMainAddresses({}, (err, x) => {
-                should.not.exist(err);
-                x[0].address.should.equal(address);
-                done();
-              });
-            });
-          });
-        }
-      );
     });
   });
 
@@ -7469,10 +6623,9 @@ describe('client API', function() {
   });
 
   var addrMap = {
-    btc: ['1PuKMvRFfwbLXyEPXZzkGi111gMUCs6uE3', '1GG3JQikGC7wxstyavUBDoCJ66bWLLENZC'],
-    bch: ['qran0w2c8x2n4wdr60s4nrle65s745wt4sakf9xa8e', 'qznkyz7hdd3jvkqc76zsf585dcp5czmz5udnlj26ya']
+    btc: ['1PuKMvRFfwbLXyEPXZzkGi111gMUCs6uE3', '1GG3JQikGC7wxstyavUBDoCJ66bWLLENZC']
   };
-  _.each(['bch', 'btc'], coin => {
+  _.each(['btc'], coin => {
     var addr = addrMap[coin];
 
     describe('Sweep paper wallet ' + coin, () => {

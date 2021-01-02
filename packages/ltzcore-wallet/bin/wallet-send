@@ -5,8 +5,7 @@ var utils = require('./cli-utils');
 var _ = require('lodash');
 var bwc = require('ltzcore-wallet-client');
 var Ltzcore_ = {
-  bch: bwc.LtzcoreCash,
-  btc: bwc.Ltzcore,
+  btc: bwc.Ltzcore
 };  
 
 program = utils.configureCommander(program);
@@ -85,11 +84,8 @@ utils.getClient(program, {
   var uri, addr, amount, note;
 
   // no backwards compat uri
-  if ((/^bitcoin(cash)?:\?r=[\w+]/).exec(arg1)) {
-    var coin2 = 'btc';
-    if (arg1.indexOf('bitcoincash') === 0) coin2 = 'bch';
-    if (coin != coin2) utils.die('Wallet / Payment Coin mismatch');
-    uri  = arg1.replace(/bitcoin(cash)?:\?r=/, '');
+  if ((/^bitcoin?:\?r=[\w+]/).exec(arg1)) {
+    uri  = arg1.replace(/bitcoin?:\?r=/, '');
 
   } else {
 

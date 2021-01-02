@@ -16,8 +16,7 @@ var config = require('../test-config');
 
 var Ltzcore = require('ltzcore-lib');
 var Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('ltzcore-lib-cash')
+  btc: Ltzcore
 };
 
 var { ChainService } = require('../../ts_build/lib/chain/index');
@@ -194,7 +193,6 @@ helpers._generateCopayersTestData = function() {
     var xpriv_44H_0H_0H = xpriv.deriveChild(44, true).deriveChild(0, true).deriveChild(0, true);
     var xpub_44H_0H_0H = Ltzcore.HDPublicKey(xpriv_44H_0H_0H);
     var id44btc = Model.Copayer._xPubToCopayerId('btc', xpub_44H_0H_0H.toString());
-    var id44bch = Model.Copayer._xPubToCopayerId('bch', xpub_44H_0H_0H.toString());
 
     var xpriv_1H = xpriv.deriveChild(1, true);
     var xpub_1H = Ltzcore.HDPublicKey(xpriv_1H);
@@ -202,7 +200,6 @@ helpers._generateCopayersTestData = function() {
     var pub = xpub_1H.deriveChild(0).publicKey;
 
     console.log('{id44btc: ', "'" + id44btc + "',");
-    console.log('id44bch: ', "'" + id44bch + "',");
     console.log('id45: ', "'" + id45 + "',");
     console.log('xPrivKey: ', "'" + xpriv.toString() + "',");
     console.log('xPubKey: ', "'" + xpub.toString() + "',");
@@ -242,8 +239,7 @@ helpers.createAndJoinWallet = function(m, n, opts, cb) {
     pubKey: TestData.keyPair.pub,
     singleAddress: !!opts.singleAddress,
     coin: opts.coin || 'btc',
-    network: opts.network || 'livenet',
-    nativeCashAddr: opts.nativeCashAddr,
+    network: opts.network || 'livenet'
   };
 
   if (_.isBoolean(opts.supportBIP44AndP2PKH))
@@ -259,11 +255,7 @@ helpers.createAndJoinWallet = function(m, n, opts, cb) {
       var pub = (_.isBoolean(opts.supportBIP44AndP2PKH) && !opts.supportBIP44AndP2PKH) ? copayerData.xPubKey_45H : copayerData.xPubKey_44H_0H_0H;
 
       if (opts.network == 'testnet') {
-        if (opts.coin == 'btc' || opts.coin == 'bch') {
-          pub = copayerData.xPubKey_44H_0H_0Ht;
-        } else {
-          pub = copayerData.xPubKey_44H_0H_0HtSAME;
-        }
+        pub = copayerData.xPubKey_44H_0H_0Ht;
       }
 
       var copayerOpts = helpers.getSignedCopayerOpts({
@@ -475,8 +467,8 @@ helpers.stubHistory = function(nr, bcHeight, txs) {
 };
 
 
-helpers.stubCheckData = function(bc, server, isBCH, cb) {
-  server.storage.walletCheck({walletId:server.walletId, bch: isBCH}).then((x) => {
+helpers.stubCheckData = function(bc, server, cb) {
+  server.storage.walletCheck({walletId:server.walletId}).then((x) => {
     bc.getCheckData = sinon.stub().callsArgWith(1, null, {sum: x.sum});
     return cb();
   });
@@ -486,10 +478,7 @@ helpers.stubCheckData = function(bc, server, isBCH, cb) {
 // fill => fill intermediary levels
 helpers.stubFeeLevels = function(levels, fill, coin) {
   coin = coin || 'btc';
-  let div = 1;
-  if (coin == 'btc' || coin == 'bch') {
-    div = 1e8;  // bitcoind returns values in BTC amounts
-  }
+  let div = 1e8;  // bitcoind returns values in BTC amounts
 
   blockchainExplorer.estimateFee = function(nbBlocks, cb) {
     var result = _.fromPairs(_.map(_.pick(levels, nbBlocks), function(fee, n) {

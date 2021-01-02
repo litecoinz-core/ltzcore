@@ -494,7 +494,7 @@ export class TransactionModel extends BaseTransaction<IBtcTransaction> {
         }
         let address = '';
         if (output.script) {
-          address = output.script.toAddress(network).toString(true);
+          address = output.script.toAddress(network).toString();
           if (address === 'false' && output.script.classify() === 'Pay to public key') {
             let hash = Libs.get(chain).lib.crypto.Hash.sha256ripemd160(output.script.chunks[0].buf);
             address = Libs.get(chain)

@@ -11,12 +11,10 @@ const _ = require('lodash');
 const sha256 = Ltzcore.crypto.Hash.sha256;
 const BN = Ltzcore.crypto.BN;
 var Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('crypto-wallet-core').LtzcoreLibCash
+  btc: Ltzcore
 };
 var MAX_FEE_PER_KB = {
-  btc: 10000 * 1000, // 10k sat/b
-  bch: 10000 * 1000  // 10k sat/b
+  btc: 10000 * 1000 // 10k sat/b
 };
 
 // PayPro Network Map
@@ -126,8 +124,6 @@ export class PayProV2 {
         return new Errors.WRONG_AMOUNT();
       case errMsg.includes('Transaction fee (X sat/kb) is below'):
         return new Errors.NOT_ENOUGH_FEE();
-      case errMsg.includes('This invoice is priced in BTC, not BCH.'):
-        return new Errors.BTC_NOT_BCH();
       case errMsg.includes(
         '	One or more input transactions for your transaction were not found on the blockchain.'
       ):
@@ -230,7 +226,7 @@ export class PayProV2 {
   /**
    * Sends an unsigned raw transaction to the server for verification of outputs and fee amount
    * @param {string} paymentUrl - the payment protocol specific url
-   * @param {string} chain - The cryptocurrency chain of the payment (BTC, BCH, etc)
+   * @param {string} chain - The cryptocurrency chain of the payment (BTC, etc)
    * @param {string} currency
    * @param [{tx: string, weightedSize: number}] unsignedTransactions - Hexadecimal format unsigned transactions
    * @param {boolean} unsafeBypassValidation

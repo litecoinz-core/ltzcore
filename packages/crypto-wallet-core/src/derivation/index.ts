@@ -1,4 +1,3 @@
-import { BchDeriver } from './bch';
 import { BtcDeriver } from './btc';
 import { Paths } from './paths';
 
@@ -15,8 +14,7 @@ export interface IDeriver {
 }
 
 const derivers: { [chain: string]: IDeriver } = {
-  BTC: new BtcDeriver(),
-  BCH: new BchDeriver()
+  BTC: new BtcDeriver()
 };
 
 export class DeriverProxy {

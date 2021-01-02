@@ -77,20 +77,10 @@ exports.history = [{
 
 
 exports.payProJsonBody = body = {
-  bch: '{"network":"test","currency":"BCH","requiredFeeRate":1.398,"outputs":[{"amount":769200,"address":"qz78y0832kskq84rr4f9t22fequ5c0l4gu6wsehezr"}],"time":"2019-03-07T18:05:44.301Z","expires":"2019-03-07T18:20:44.301Z","memo":"Payment request for BitPay invoice 3oZcpotopVGcZ2stRw2dop for merchant GusPay","paymentUrl":"https://test.bitpay.com/i/3oZcpotopVGcZ2stRw2dop","paymentId":"3oZcpotopVGcZ2stRw2dop"}',
   btc: '{"network":"main","currency":"BTC","requiredFeeRate":27.001,"outputs":[{"amount":1004800,"address":"1MR4ucgpxum2iPYCixX77Qi9rR4im3ccsx"}],"time":"2019-03-08T15:27:43.684Z","expires":"2019-03-08T15:42:43.684Z","memo":"Payment request for BitPay invoice 4Zrpank3aA2EAdYaQwMXbz for merchant Electronic Frontier Foundation","paymentUrl":"https://bitpay.com/i/4Zrpank3aA2EAdYaQwMXbz","paymentId":"4Zrpank3aA2EAdYaQwMXbz"}',
 };
 
 exports.payProJson = {
-  'bch': {
-    body: Buffer.from(body.bch),
-    headers: {
-      'x-identity': 'mh65MN7drqmwpCRZcEeBEE9ceQCQ95HtZc',
-      signature: '3a1c2dae616038003ab66490c7173f95daf863933258cd0163d59a9f15d797b06715ce4c9ecf7688b4220d9c13079ec9e9b8399ca5e8b162e3216b8512f84e3d',
-      digest: 'SHA-256=b820bd1e643a45ef73c25f9771b8ed703de068171f93c8fee4633606480a7a0a',
-      'x-signature-type': 'ecc',
-    }
-  },
   'btc': {
     body:  Buffer.from(body.btc),
     headers: {
@@ -102,7 +92,6 @@ exports.payProJson = {
   }
 };
 exports.payProJsonV2Body = bodyV2 = {
-  bch: '{"time":"2019-11-05T17:05:31.791Z","expires":"2019-11-05T17:20:31.791Z","memo":"Payment request for BitPay invoice XM8XbreRs6cnKkR3yYT6qQ for merchant BitPay Visa® Load (USD-USA)","paymentUrl":"https://bitpay.com/i/XM8XbreRs6cnKkR3yYT6qQ","paymentId":"XM8XbreRs6cnKkR3yYT6qQ","chain":"BCH","network":"main","instructions":[{"type":"transaction","requiredFeeRate":1,"outputs":[{"amount":337900,"address":"qpymzlw4dfgawe2hy6xalj0qnzwedrqfvg96jl5ev6"}]}]}',
   btc: '{"time":"2019-11-05T15:21:09.047Z","expires":"2019-11-05T15:36:09.047Z","memo":"Payment request for BitPay invoice LanynqCPoL2JQb8z8s5Z3X for merchant BitPay Visa® Load (USD-USA)","paymentUrl":"https://bitpay.com/i/LanynqCPoL2JQb8z8s5Z3X","paymentId":"LanynqCPoL2JQb8z8s5Z3X","chain":"BTC","network":"main","instructions":[{"type":"transaction","requiredFeeRate":34.337,"outputs":[{"amount":19800,"address":"1CpEMwff6DA52FLoq4JAhd2xFSEjQxyokm"}]}]}'
 };
 
@@ -115,15 +104,6 @@ exports.payProJsonV2 = {
       digest: 'SHA-256=11d2c9d7f4ff8a843f567c3ce0982201252c78f7d29501fadfffed68aa49c6c9',
       'x-signature-type': 'ecc'
     },
-  },
-  'bch': {
-    body: Buffer.from(bodyV2.bch),
-    headers: {
-      'x-identity': '1DbY94wCcLRM1Y6RGFg457JyqBbsYxzfiN',
-      signature: '754b7fa51be429fe89faf5b72605a39846a433aa44464f178503b2d499d0b6951ae3ffa313c7b175f019aa0f4f94c73be03818840b27743ad88bef56c63171aa',
-      digest: 'SHA-256=512b6acba3fe082ff6486c7d4934fabee3e34d6466501c97351987326f107547',
-      'x-signature-type': 'ecc'
-    }
   }
 };
 

@@ -41,14 +41,6 @@ module.exports = {
         regtestEnabled: false
       }
     },
-    bch: {
-      livenet: {
-        url: 'https://api.bitcore.io'
-      },
-      testnet: {
-        url: 'https://api.bitcore.io'
-      }
-    },
     socketApiKey: 'socketApiKey'
   },
   pushNotificationsOpts: {
@@ -110,10 +102,6 @@ module.exports = {
   //    btc: {
   //      livenet: 'https://insight.bitcore.io/#/BTC/mainnet/tx/{{txid}}',
   //      testnet: 'https://insight.bitcore.io/#/BTC/testnet/tx/{{txid}}',
-  //    },
-  //    bch: {
-  //      livenet: 'https://insight.bitcore.io/#/BCH/mainnet/tx/{{txid}}',
-  //      testnet: 'https://insight.bitcore.io/#/BCH/testnet/tx/{{txid}}',
   //    }
   //  },
   // },

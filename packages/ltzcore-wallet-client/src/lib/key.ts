@@ -3,7 +3,6 @@
 var $ = require('preconditions').singleton();
 import {
   LtzcoreLib,
-  LtzcoreLibCash,
   Deriver,
   Transactions
 } from 'crypto-wallet-core';
@@ -42,7 +41,6 @@ export class Key {
   #mnemonicHasPassphrase: boolean;
 
   public id: any;
-  public use0forBCH: boolean;
   public use44forMultisig: boolean;
   public compliantDerivation: boolean;
   public BIP45: boolean;
@@ -62,7 +60,6 @@ export class Key {
    *    'BIP45': 'BIP45',
    *
    *    // data for derived credentials.
-   *    'use0forBCH': 'use0forBCH', // use the 0 coin' path element in BCH  (legacy)
    *    'use44forMultisig': 'use44forMultisig', // use the purpose 44' for multisig wallts (legacy)
    *    'id': 'id',
    *  };
@@ -81,7 +78,6 @@ export class Key {
       passphrase?: string; // seed passphrase
       password?: string; // encrypting password
       sjclOpts?: any; // options to SJCL encrypt
-      use0forBCH?: boolean;
       useLegacyPurpose?: boolean;
       useLegacyCoinType?: boolean;
       nonCompliantDerivation?: boolean;
@@ -92,7 +88,6 @@ export class Key {
     this.id = Uuid.v4();
 
     // bug backwards compatibility flags
-    this.use0forBCH = opts.useLegacyCoinType;
     this.use44forMultisig = opts.useLegacyPurpose;
     this.compliantDerivation = !opts.nonCompliantDerivation;
 
@@ -160,7 +155,6 @@ export class Key {
         this.compliantDerivation = x.compliantDerivation;
         this.BIP45 = x.BIP45;
         this.id = x.id;
-        this.use0forBCH = x.use0forBCH;
         this.use44forMultisig = x.use44forMultisig;
 
         $.checkState(
@@ -171,7 +165,6 @@ export class Key {
 
       case 'objectV1':
         // Default Values for V1
-        this.use0forBCH = false;
         this.use44forMultisig = false;
         this.compliantDerivation = true;
         this.id = Uuid.v4();
@@ -192,14 +185,6 @@ export class Key {
         // If the wallet was single seed... multisig walelts accounts
         // will be 48'
         this.use44forMultisig = x.n > 1 ? true : false;
-
-        // if old credentials had use145forBCH...use it.
-        // else,if the wallet is bch, set it to true.
-        this.use0forBCH = x.use145forBCH
-          ? false
-          : x.coin == 'bch'
-          ? true
-          : false;
 
         this.BIP45 = x.derivationStrategy == 'BIP45';
         break;
@@ -255,7 +240,6 @@ export class Key {
       BIP45: this.BIP45,
 
       // data for derived credentials.
-      use0forBCH: this.use0forBCH,
       use44forMultisig: this.use44forMultisig,
       id: this.id
     };
@@ -383,12 +367,6 @@ export class Key {
 
     if (opts.network == 'testnet' && Constants.UTXO_COINS.includes(opts.coin)) {
       coinCode = '1';
-    } else if (opts.coin == 'bch') {
-      if (this.use0forBCH) {
-        coinCode = '0';
-      } else {
-        coinCode = '145';
-      }
     } else if (opts.coin == 'btc') {
       coinCode = '0';
     } else {
@@ -426,7 +404,7 @@ export class Key {
     ).privateKey.toString();
 
     if (opts.network == 'testnet') {
-      // Hacky: BTC/BCH xPriv depends on network: This code is to
+      // Hacky: BTC xPriv depends on network: This code is to
       // convert a livenet xPriv to a testnet xPriv
       let x = xPrivKey.toObject();
       x.network = 'testnet';

@@ -796,14 +796,6 @@ curl -v localhost:3000/api/status/enabled-chains
     {
         "chain": "BTC",
         "network": "testnet"
-    },
-    {
-        "chain": "BCH",
-        "network": "mainnet"
-    },
-    {
-        "chain": "BCH",
-        "network": "testnet"
     }
 ]
 ```

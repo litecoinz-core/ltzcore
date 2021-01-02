@@ -53,7 +53,7 @@ describe('Transaction Model', function() {
   beforeEach(async () => {
     await resetDatabase();
   });
-  const chain = 'BCH';
+  const chain = 'BTC';
   const network = 'integration';
   const blockTx = {
     chain,

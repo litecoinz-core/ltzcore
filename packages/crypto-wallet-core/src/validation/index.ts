@@ -1,4 +1,3 @@
-import { BchValidation } from './bch';
 import { BtcValidation } from './btc';
 
 export interface IValidation {
@@ -7,8 +6,7 @@ export interface IValidation {
 }
 
 const validation: { [chain: string]: IValidation } = {
-  BTC: new BtcValidation(),
-  BCH: new BchValidation()
+  BTC: new BtcValidation()
 };
 
 export class ValidationProxy {

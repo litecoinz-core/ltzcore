@@ -13,8 +13,7 @@ const Constants = Common.Constants,
   Defaults = Common.Defaults,
   Utils = Common.Utils;
 const Ltzcore = {
-  btc: require('ltzcore-lib'),
-  bch: require('ltzcore-lib-cash')
+  btc: require('ltzcore-lib')
 };
 
 export interface IWallet {
@@ -39,7 +38,6 @@ export interface IWallet {
   beRegistered: boolean; // Block explorer registered
   beAuthPrivateKey2: string;
   beAuthPublicKey2: string;
-  nativeCashAddr: boolean;
   isTestnet?: boolean;
   usePurpose48?: boolean;
 }
@@ -66,7 +64,6 @@ export class Wallet {
   beRegistered: boolean; // Block explorer registered
   beAuthPrivateKey2: string;
   beAuthPublicKey2: string;
-  nativeCashAddr: boolean;
   isTestnet?: boolean;
   usePurpose48?: boolean;
 
@@ -112,9 +109,6 @@ export class Wallet {
     x.beAuthPrivateKey2 = null;
     x.beAuthPublicKey2 = null;
 
-    // x.nativeCashAddr opts is only for testing
-    x.nativeCashAddr = _.isUndefined(opts.nativeCashAddr) ? (x.coin == 'bch' ? true : null) : opts.nativeCashAddr;
-
     return x;
   }
 
@@ -150,7 +144,6 @@ export class Wallet {
     x.beAuthPrivateKey2 = obj.beAuthPrivateKey2;
     x.beAuthPublicKey2 = obj.beAuthPublicKey2;
 
-    x.nativeCashAddr = obj.nativeCashAddr;
     x.usePurpose48 = obj.usePurpose48;
 
     return x;
@@ -265,8 +258,7 @@ export class Wallet {
       this.m,
       this.coin,
       this.network,
-      isChange,
-      !this.nativeCashAddr
+      isChange
     );
     return address;
   }

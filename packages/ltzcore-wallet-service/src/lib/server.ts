@@ -32,14 +32,12 @@ const Uuid = require('uuid');
 const $ = require('preconditions').singleton();
 const deprecatedServerMessage = require('../deprecated-serverMessages');
 const serverMessages = require('../serverMessages');
-const BCHAddressTranslator = require('./bchaddresstranslator');
 const EmailValidator = require('email-validator');
 
 import { Validation } from 'crypto-wallet-core';
 const Ltzcore = require('ltzcore-lib');
 const Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('ltzcore-lib-cash')
+  btc: Ltzcore
 };
 
 const Common = require('./common');
@@ -459,7 +457,7 @@ export class WalletService {
    * @param {number} opts.n - Total copayers.
    * @param {string} opts.pubKey - Public key to verify copayers joining have access to the wallet secret.
    * @param {string} opts.singleAddress[=false] - The wallet will only ever have one address.
-   * @param {string} opts.coin[='btc'] - The coin for this wallet (btc, bch).
+   * @param {string} opts.coin[='btc'] - The coin for this wallet (btc).
    * @param {string} opts.network[='livenet'] - The Bitcoin network for this wallet.
    * @param {string} opts.account[=0] - BIP44 account number
    * @param {string} opts.usePurpose48 - for Multisig wallet, use purpose=48
@@ -467,20 +465,6 @@ export class WalletService {
    */
   createWallet(opts, cb) {
     let pubKey;
-
-    if (opts.coin === 'bch' && opts.n > 1) {
-      const version = Utils.parseVersion(this.clientVersion);
-      if (version && version.agent === 'bwc') {
-        if (version.major < 8 || (version.major === 8 && version.minor < 3)) {
-          return cb(
-            new ClientError(
-              Errors.codes.UPGRADE_NEEDED,
-              'BWC clients < 8.3 are no longer supported for multisig BCH wallets.'
-            )
-          );
-        }
-      }
-    }
 
     if (!checkRequired(opts, ['name', 'm', 'n', 'pubKey'], cb)) {
       return;
@@ -552,7 +536,6 @@ export class WalletService {
             singleAddress: !!opts.singleAddress,
             derivationStrategy,
             addressType,
-            nativeCashAddr: opts.nativeCashAddr,
             usePurpose48: opts.n > 1 && !!opts.usePurpose48
           });
           this.storage.storeWallet(wallet, err => {
@@ -578,22 +561,7 @@ export class WalletService {
       if (err) return cb(err);
       if (!wallet) return cb(Errors.WALLET_NOT_FOUND);
 
-      // cashAddress migration
-      if (wallet.coin != 'bch' || wallet.nativeCashAddr) return cb(null, wallet);
-
-      // only for testing
-      if (opts.doNotMigrate) return cb(null, wallet);
-
-      // remove someday...
-      logger.info(`Migrating wallet ${wallet.id} to cashAddr`);
-      this.storage.migrateToCashAddr(this.walletId, e => {
-        if (e) return cb(e);
-        wallet.nativeCashAddr = true;
-        return this.storage.storeWallet(wallet, e => {
-          if (e) return cb(e);
-          return cb(e, wallet);
-        });
-      });
+      return cb(null, wallet);
     });
   }
 
@@ -996,7 +964,7 @@ export class WalletService {
    * Joins a wallet in creation.
    * @param {Object} opts
    * @param {string} opts.walletId - The wallet id.
-   * @param {string} opts.coin[='btc'] - The expected coin for this wallet (btc, bch).
+   * @param {string} opts.coin[='btc'] - The expected coin for this wallet (btc).
    * @param {string} opts.name - The copayer name.
    * @param {string} opts.xPubKey - Extended Public Key for this copayer.
    * @param {string} opts.requestPubKey - Public Key used to check requests from this copayer.
@@ -1027,20 +995,6 @@ export class WalletService {
       this.storage.fetchWallet(opts.walletId, (err, wallet) => {
         if (err) return cb(err);
         if (!wallet) return cb(Errors.WALLET_NOT_FOUND);
-
-        if (opts.coin === 'bch' && wallet.n > 1) {
-          const version = Utils.parseVersion(this.clientVersion);
-          if (version && version.agent === 'bwc') {
-            if (version.major < 8 || (version.major === 8 && version.minor < 3)) {
-              return cb(
-                new ClientError(
-                  Errors.codes.UPGRADE_NEEDED,
-                  'BWC clients < 8.3 are no longer supported for multisig BCH wallets.'
-                )
-              );
-            }
-          }
-        }
 
         if (wallet.n > 1 && wallet.usePurpose48) {
           const version = Utils.parseVersion(this.clientVersion);
@@ -1241,7 +1195,6 @@ export class WalletService {
    * Creates a new address.
    * @param {Object} opts
    * @param {Boolean} [opts.ignoreMaxGap=false] - Ignore constraint of maximum number of consecutive addresses without activity
-   * @param {Boolean} opts.noCashAddr (do not use cashaddr, only for backwards compat)
    * @returns {Address} address
    */
   createAddress(opts, cb) {
@@ -1262,10 +1215,6 @@ export class WalletService {
         (err, duplicate) => {
           if (err) return cb(err);
           if (duplicate) return cb(null, address);
-          if (wallet.coin == 'bch' && opts.noCashAddr) {
-            address = _.cloneDeep(address);
-            address.address = BCHAddressTranslator.translate(address.address, 'copay');
-          }
 
           this._notify(
             'NewAddress',
@@ -1717,9 +1666,6 @@ export class WalletService {
           const feePerKb = _.isObject(result) && result[p] && _.isNumber(result[p]) ? +result[p] : -1;
           if (feePerKb < 0) failed.push(p);
 
-          // NOTE: ONLY BTC/BCH expect feePerKb to be Bitcoin amounts
-          // others... expect wei.
-
           return ChainService.convertFeePerKb(coin, p, feePerKb);
         })
       );
@@ -1957,42 +1903,6 @@ export class WalletService {
             return next(validationError);
           }
           next();
-        },
-        next => {
-          // check outputs are on 'copay' format for BCH
-          if (wallet.coin != 'bch') return next();
-          if (!opts.noCashAddr) return next();
-
-          // TODO remove one cashaddr is used internally (noCashAddr flag)?
-          opts.origAddrOutputs = _.map(opts.outputs, x => {
-            const ret: {
-              toAddress?: string;
-              amount?: number;
-              message?: string;
-            } = {
-              toAddress: x.toAddress,
-              amount: x.amount
-            };
-            if (x.message) ret.message = x.message;
-
-            return ret;
-          });
-          opts.returnOrigAddrOutputs = false;
-          _.each(opts.outputs, x => {
-            if (!x.toAddress) return;
-
-            let newAddr;
-            try {
-              newAddr = Ltzcore_['bch'].Address(x.toAddress).toLegacyAddress();
-            } catch (e) {
-              return next(e);
-            }
-            if (x.txAddress != newAddr) {
-              x.toAddress = newAddr;
-              opts.returnOrigAddrOutputs = true;
-            }
-          });
-          next();
         }
       ],
       cb
@@ -2053,8 +1963,7 @@ export class WalletService {
    * @param {Array} opts.txpVersion - Optional. Version for TX Proposal (current = 4, only =3 allowed).
    * @param {number} opts.fee - Optional. Use an fixed fee for this TX (only when opts.inputs is specified)
    * @param {Boolean} opts.noShuffleOutputs - Optional. If set, TX outputs won't be shuffled. Defaults to false
-   * @param {Boolean} opts.noCashAddr - do not use cashaddress for bch
-   * @param {Boolean} opts.signingMethod[=ecdsa] - do not use cashaddress for bch
+   * @param {Boolean} opts.signingMethod[=ecdsa]
    * @returns {TxProposal} Transaction proposal. outputs address format will use the same format as inpunt.
    */
   createTx(opts, cb) {
@@ -2136,12 +2045,9 @@ export class WalletService {
                   opts.signingMethod = opts.signingMethod || 'ecdsa';
                   opts.coin = opts.coin || wallet.coin;
 
-                  if (!['ecdsa', 'schnorr'].includes(opts.signingMethod)) {
+                  if (!['ecdsa'].includes(opts.signingMethod)) {
                     return next(Errors.WRONG_SIGNING_METHOD);
                   }
-
-                  //  schnorr only on BCH
-                  if (opts.coin != 'bch' && opts.signingMethod == 'schnorr') return next(Errors.WRONG_SIGNING_METHOD);
 
                   return next();
                 },
@@ -2197,23 +2103,12 @@ export class WalletService {
                 next => {
                   if (opts.dryRun) return next();
 
-                  if (txp.coin == 'bch' && txp.changeAddress) {
-                    const format = opts.noCashAddr ? 'copay' : 'cashaddr';
-                    txp.changeAddress.address = BCHAddressTranslator.translate(txp.changeAddress.address, format);
-                  }
-
                   this.storage.storeTx(wallet.id, txp, next);
                 }
               ],
               err => {
                 if (err) return cb(err);
 
-                if (txp.coin == 'bch') {
-                  if (opts.returnOrigAddrOutputs) {
-                    logger.info('Returning Orig BCH address outputs for compat');
-                    txp.outputs = opts.origAddrOutputs;
-                  }
-                }
                 return cb(null, txp);
               }
             );
@@ -2229,7 +2124,6 @@ export class WalletService {
    * @param {Object} opts
    * @param {string} opts.txProposalId - The tx id.
    * @param {string} opts.proposalSignature - S(raw tx). Used by other copayers to verify the proposal.
-   * @param {Boolean} [opts.noCashAddr] - do not use cashaddress for bch
    */
   publishTx(opts, cb) {
     if (!checkRequired(opts, ['txProposalId', 'proposalSignature'], cb)) return;
@@ -2276,10 +2170,6 @@ export class WalletService {
               if (err) return cb(err);
 
               this._notifyTxProposalAction('NewTxProposal', txp, () => {
-                if (txp.coin == 'bch' && txp.changeAddress) {
-                  const format = opts.noCashAddr ? 'copay' : 'cashaddr';
-                  txp.changeAddress.address = BCHAddressTranslator.translate(txp.changeAddress.address, format);
-                }
                 return cb(null, txp);
               });
             });
@@ -2467,7 +2357,6 @@ export class WalletService {
    * @param {string} opts.txProposalId - The identifier of the transaction.
    * @param {string} opts.signatures - The signatures of the inputs of this tx for this copayer (in appearance order)
    * @param {string} opts.maxTxpVersion - Client's maximum supported txp version
-   * @param {boolean} opts.supportBchSchnorr - indication whether to use schnorr for signing tx
    */
   signTx(opts, cb) {
     if (!checkRequired(opts, ['txProposalId', 'signatures'], cb)) return;
@@ -2503,8 +2392,6 @@ export class WalletService {
           });
           if (action) return cb(Errors.COPAYER_VOTED);
           if (!txp.isPending()) return cb(Errors.TX_NOT_PENDING);
-
-          if (txp.signingMethod === 'schnorr' && !opts.supportBchSchnorr) return cb(Errors.UPGRADE_NEEDED);
 
           const copayer = wallet.getCopayer(this.copayerId);
 
@@ -2724,7 +2611,6 @@ export class WalletService {
   /**
    * Retrieves pending transaction proposals.
    * @param {Object} opts
-   * @param {Boolean} opts.noCashAddr (do not use cashaddr, only for backwards compat)
    * @param {String} opts.network  The network of the MULTISIG ETH transactions
    * @returns {TxProposal[]} Transaction proposal.
    */
@@ -2757,19 +2643,6 @@ export class WalletService {
             return txp.status == 'broadcasted';
           });
 
-          if (txps[0] && txps[0].coin == 'bch') {
-            const format = opts.noCashAddr ? 'copay' : 'cashaddr';
-            _.each(txps, x => {
-              if (x.changeAddress) {
-                x.changeAddress.address = BCHAddressTranslator.translate(x.changeAddress.address, format);
-              }
-              _.each(x.outputs, x => {
-                if (x.toAddress) {
-                  x.toAddress = BCHAddressTranslator.translate(x.toAddress, format);
-                }
-              });
-            });
-          }
           return cb(err, txps);
         }
       );
@@ -4006,7 +3879,7 @@ export class WalletService {
   /**
    * Returns exchange rates of the supported fiat currencies for the specified coin.
    * @param {Object} opts
-   * @param {String} opts.coin - The coin requested (btc, bch).
+   * @param {String} opts.coin - The coin requested (btc).
    * @param {String} [opts.code] - Currency ISO code (e.g: USD, EUR, ARS).
    * @param {Date} [opts.ts] - A timestamp to base the rate on (default Date.now()).
    * @param {String} [opts.provider] - A provider of exchange rates (default 'BitPay').

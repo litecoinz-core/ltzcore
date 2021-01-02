@@ -75,39 +75,6 @@ npm install
             "password": "password"
           }
         }
-      },
-      "BCH": {
-        "mainnet": {
-          "parentChain": "BTC",
-          "forkHeight": 478558,
-          "trustedPeers": [
-            {
-              "host": "127.0.0.1",
-              "port": 30008
-            }
-          ],
-          "rpc": {
-            "host": "127.0.0.1",
-            "port": 30009,
-            "username": "username",
-            "password": "password"
-          }
-        },
-        "regtest": {
-          "chainSource": "p2p",
-          "trustedPeers": [
-            {
-              "host": "127.0.0.1",
-              "port": 30020
-            }
-          ],
-          "rpc": {
-            "host": "127.0.0.1",
-            "port": 30021,
-            "username": "username",
-            "password": "password"
-          }
-        }
       }
     }
   }
@@ -177,11 +144,9 @@ npm run node
 - [Ltzcore Channel](https://github.com/bitpay/ltzcore-channel) - Micropayment channels for rapidly adjusting bitcoin transactions
 - [Ltzcore ECIES](https://github.com/bitpay/ltzcore-ecies) - Uses ECIES symmetric key negotiation from public keys to encrypt arbitrarily long data streams
 - [Ltzcore Lib](packages/ltzcore-lib) - A pure and powerful JavaScript Bitcoin library
-- [Ltzcore Lib Cash](packages/ltzcore-lib-cash) - A pure and powerful JavaScript Bitcoin Cash library
 - [Ltzcore Message](https://github.com/bitpay/ltzcore-message) - Bitcoin message verification and signing
 - [Ltzcore Mnemonic](packages/ltzcore-mnemonic) - Implements mnemonic code for generating deterministic keys
 - [Ltzcore P2P](packages/ltzcore-p2p) - The peer-to-peer networking protocol for BTC
-- [Ltzcore P2P Cash](packages/ltzcore-p2p-cash) - The peer-to-peer networking protocol for BCH
 - [Crypto Wallet Core](packages/crypto-wallet-core) - A coin-agnostic wallet library for creating transactions, signing, and address derivation
 
 ## Extras

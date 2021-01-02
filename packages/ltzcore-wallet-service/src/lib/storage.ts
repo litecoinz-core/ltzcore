@@ -17,7 +17,6 @@ import {
   Wallet
 } from './model';
 
-const BCHAddressTranslator = require('./bchaddresstranslator'); // only for migration
 const $ = require('preconditions').singleton();
 
 const collections = {
@@ -601,34 +600,6 @@ export class Storage {
 
         return cb(null, result.map(Address.fromObj));
       });
-  }
-
-  migrateToCashAddr(walletId, cb) {
-    const cursor = this.db.collection(collections.ADDRESSES).find({
-      walletId
-    });
-
-    cursor.on('end', () => {
-      console.log(`Migration to cash address of ${walletId} Finished`);
-      return this.clearWalletCache(walletId, cb);
-    });
-
-    cursor.on('err', err => {
-      return cb(err);
-    });
-
-    cursor.on('data', doc => {
-      cursor.pause();
-      let x;
-      try {
-        x = BCHAddressTranslator.translate(doc.address, 'cashaddr');
-      } catch (e) {
-        return cb(e);
-      }
-
-      this.db.collection(collections.ADDRESSES).updateMany({ _id: doc._id }, { $set: { address: x } });
-      cursor.resume();
-    });
   }
 
   fetchUnsyncAddresses(walletId, cb) {

@@ -2,7 +2,6 @@
 
 import {
   LtzcoreLib,
-  LtzcoreLibCash,
   Deriver,
   Transactions
 } from 'crypto-wallet-core';
@@ -17,8 +16,7 @@ const Stringify = require('json-stable-stringify');
 
 const Ltzcore = LtzcoreLib;
 const Ltzcore_ = {
-  btc: Ltzcore,
-  bch: LtzcoreLibCash
+  btc: Ltzcore
 };
 const PrivateKey = Ltzcore.PrivateKey;
 const PublicKey = Ltzcore.PublicKey;
@@ -226,10 +224,6 @@ export class Utils {
   // livenet xpub starts with x.
   // no matter WHICH coin
   static xPubToCopayerId(coin, xpub) {
-    // this was introduced because we allowed coin = 0' wallets for BCH
-    // for the  "wallet duplication" feature
-    // now it is effective for all coins.
-
     const chain = this.getChain(coin).toLowerCase();
     var str = chain == 'btc' ? xpub : chain + xpub;
 

@@ -3,13 +3,11 @@ import * as CWC from 'crypto-wallet-core';
 
 module.exports = {
   COINS: {
-    BTC: 'btc',
-    BCH: 'bch'
+    BTC: 'btc'
   },
 
   UTXO_COINS: {
-    BTC: 'btc',
-    BCH: 'bch'
+    BTC: 'btc'
   },
 
   NETWORKS: {
@@ -17,7 +15,7 @@ module.exports = {
     TESTNET: 'testnet'
   },
 
-  ADDRESS_FORMATS: ['copay', 'cashaddr', 'legacy'],
+  ADDRESS_FORMATS: ['copay', 'legacy'],
 
   SCRIPT_TYPES: {
     P2SH: 'P2SH',

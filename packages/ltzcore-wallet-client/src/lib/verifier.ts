@@ -2,10 +2,9 @@ import * as _ from 'lodash';
 import { Constants, Utils } from './common';
 var $ = require('preconditions').singleton();
 
-import { LtzcoreLib, LtzcoreLibCash } from 'crypto-wallet-core';
+import { LtzcoreLib } from 'crypto-wallet-core';
 
 var Ltzcore = LtzcoreLib;
-var BCHAddress = LtzcoreLibCash.Address;
 
 var log = require('./log');
 
@@ -231,14 +230,6 @@ export class Verifier {
     if (amount != _.sumBy(payproOpts.instructions, 'amount')) return false;
 
     if (txp.coin == 'btc' && toAddress != payproOpts.instructions[0].toAddress)
-      return false;
-
-    // Workaround for cashaddr/legacy address problems...
-    if (
-      txp.coin == 'bch' &&
-      new BCHAddress(toAddress).toString() !=
-        new BCHAddress(payproOpts.instructions[0].toAddress).toString()
-    )
       return false;
 
     // this generates problems...

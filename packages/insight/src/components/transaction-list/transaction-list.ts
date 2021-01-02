@@ -121,10 +121,7 @@ export class TransactionListComponent implements OnInit {
   }
 
   public loadMore(infiniteScroll) {
-    if (
-      (this.queryType === 'blockHash' && this.chainNetwork.chain === 'BTC') ||
-      this.chainNetwork.chain === 'BCH'
-    ) {
+    if (this.queryType === 'blockHash' && this.chainNetwork.chain === 'BTC') {
       this.fetchBlockTxCoinInfo(this.blockPageNum);
       this.limit += this.chunkSize;
     } else {

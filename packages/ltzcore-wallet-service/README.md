@@ -250,8 +250,6 @@ Returns:
 
 - List of pending TX Proposals. (see [fields on the source code](https://github.com/bitpay/ltzcore/blob/master/packages/ltzcore-wallet-service/src/lib/model/txproposal.ts))
 
-- Uses cashaddr without prefix for BCH
-
 ### `/v4/addresses/`: Get Wallet's main addresses (does not include change addresses)
 
 Optional Arguments:
@@ -261,7 +259,6 @@ Optional Arguments:
 Returns:
 
 - List of Addresses object: (https://github.com/bitpay/ltzcore/blob/master/packages/ltzcore-wallet-service/src/lib/model/address.ts). This call is mainly provided so the client check this addresses for incoming transactions (using a service like [Insight](https://insight.bitcore.io)
-- Returns cashaddr without prefix for BCH
 
 ### `/v1/balance/`: Get Wallet's balance
 
@@ -335,7 +332,6 @@ Required Arguments:
 - (opt) payProUrl: Paypro URL for peers to verify TX
 - (opt) feePerKb: Use an alternative fee per KB for this TX.
 - (opt) excludeUnconfirmedUtxos: Do not use UTXOs of unconfirmed transactions as inputs for this TX.
-- BCH addresses need to be cashaddr without prefix.
 
 Returns:
 

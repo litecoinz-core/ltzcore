@@ -106,19 +106,6 @@ describe('Utils', function() {
         args: [1299, 'btc'],
         expected: '0.000013',
       }, {
-        args: [1299, 'bch'],
-        expected: '0.000013',
-      }, {
-        args: [12940, 'bch'],
-        expected: '0.000129',
-      }, {
-        args: [12960, 'bch'],
-        expected: '0.00013',
-      }, {
-        args: [129900000, 'bch'],
-        expected: '1.299',
-      }, {
-
         args: [1234567899999, 'btc'],
         expected: '12,345.679',
       }, {
@@ -148,9 +135,6 @@ describe('Utils', function() {
   describe('#getAddressCoin', function() {
     it('should identify btc as coin for 1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA', function() {
       Utils.getAddressCoin('1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA').should.equal('btc');
-    });
-    it('should identify bch as coin for CcJ4qUfyQ8x5NwhAeCQkrBSWVeXxXghcNz', function() {
-      Utils.getAddressCoin('CcJ4qUfyQ8x5NwhAeCQkrBSWVeXxXghcNz').should.equal('bch');
     });
     it('should return null for 1L', function() {
       should.not.exist(Utils.getAddressCoin('1L'));
@@ -216,27 +200,6 @@ describe('Utils', function() {
 
   });
 
-
-  describe('#translateAddress', function() {
-    it('should translate address from btc to bch', function() {
-      var res = Utils.translateAddress('1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA', 'bch');
-      res.should.equal('CcJ4qUfyQ8x5NwhAeCQkrBSWVeXxXghcNz');
-    });
-    it('should translate address from bch to btc', function() {
-      var res = Utils.translateAddress('HBf8isgS8EXG1r3X6GP89FmooUmiJ42wHS', 'btc');
-      res.should.equal('36q2G5FMGvJbPgAVEaiyAsFGmpkhPKwk2r');
-    });
-
-    it('should keep the address if there is nothing to do (bch)', function() {
-      var res = Utils.translateAddress('CcJ4qUfyQ8x5NwhAeCQkrBSWVeXxXghcNz', 'bch');
-      res.should.equal('CcJ4qUfyQ8x5NwhAeCQkrBSWVeXxXghcNz');
-    });
-    it('should keep the address if there is nothing to do (btc)', function() {
-      var res = Utils.translateAddress('1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA', 'btc');
-      should.exist(res);
-      res.should.equal('1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA');
-    });
-  });
 
   describe('#getIpFromReq', () => {
     it('should get the ip if header x-forwarded-for exists', function() {

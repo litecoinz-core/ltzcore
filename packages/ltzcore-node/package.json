@@ -58,7 +58,6 @@
     "ltzcore-node",
     "typescript",
     "bitcoin",
-    "bitcoin-cash",
     "node"
   ],
   "license": "MIT",
@@ -95,9 +94,7 @@
     "abi-decoder": "2.0.1",
     "ltzcore-client": "^8.23.1",
     "ltzcore-lib": "^8.23.1",
-    "ltzcore-lib-cash": "^8.23.1",
     "ltzcore-p2p": "^8.23.1",
-    "ltzcore-p2p-cash": "^8.23.1",
     "ltzcore-wallet-client": "^8.23.1",
     "body-parser": "1.18.3",
     "cors": "2.8.4",

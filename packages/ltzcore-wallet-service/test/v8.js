@@ -5,18 +5,12 @@ var chai = require('chai');
 var sinon = require('sinon');
 var should = chai.should();
 var { V8 } = require('../ts_build/lib/blockchainexplorers/v8');
-var B = require('ltzcore-lib-cash');
+var B = require('ltzcore-lib');
 const { Readable } = require('stream');
 var Common = require('../ts_build/lib/common');
 var Defaults = Common.Defaults;
 
-const V8UTXOS = [
-{"_id":"5c1d4bc47adced963b3cddb9","chain":"BCH","network":"testnet","coinbase":false,"mintIndex":0,"spentTxid":"","mintTxid":"6e34d9b83631cd55ee09d907061332ba3c17246e3c1255543fb7a35e58c52e42","mintHeight":12,"spentHeight":-2,"address":"qrua7vsdmks4522wwv8rtamfph7g8s8vpq6a0g3veh","script":"76a914f9df320ddda15a294e730e35f7690dfc83c0ec0888ac","value":1000000,"confirmations":-1},
-{"_id":"5c1e33e17adced963b776bcf","chain":"BCH","network":"testnet","coinbase":false,"mintIndex":0,"spentTxid":"","mintTxid":"fb1340bae2431f71c5f14d0c5893cbfb09042dcb9602b858ccec43e0e1e2f1a1","mintHeight":15,"spentHeight":-2,"address":"qrua7vsdmks4522wwv8rtamfph7g8s8vpq6a0g3veh","script":"76a914f9df320ddda15a294e730e35f7690dfc83c0ec0888ac","value":2000000,"confirmations":-1},
-{"_id":"5c21088f7adced963b33eea2","chain":"BCH","network":"testnet","coinbase":false,"mintIndex":0,"spentTxid":"","mintTxid":"42eeb1d139521fa5206685ffec5df3b302cf85561201178680a0efe6bd23d449","mintHeight":-1,"spentHeight":-2,"address":"qrua7vsdmks4522wwv8rtamfph7g8s8vpq6a0g3veh","script":"76a914f9df320ddda15a294e730e35f7690dfc83c0ec0888ac","value":2000000,"confirmations":-1}];
-
-
-const V8UTXOS2 = [ 
+const V8UTXOS = [ 
   { _id: '5cb4f9d612025b0a3931b13c', chain: 'BTC', network: 'mainnet', coinbase: false, mintIndex: 0, spentTxid: '', mintTxid: '623f72b089da60a179d7b85b50ed655e8580747ee06f2f77369cacfb99de11a0', mintHeight: 571792, spentHeight: -2, address: '38o49rd64PFDmvUV7928K1a5SRnoVgJSFW', script: 'a9144ded3cc47fcf6883a78c29134f90b0c1b0c368c887', value: 109810934, confirmations: 126 },
   { _id: '5cb503e612025b0a393d2ea9', chain: 'BTC', network: 'mainnet', coinbase: false, mintIndex: 0, spentTxid: '', mintTxid: '06ab9db9100409132a4c1367b87f16983938007dbae7b96a0746a64a7755e3e6', mintHeight: 571797, spentHeight: -2, address: '36pUaXzGouNdCqUDRWRXX9NJYungJEWJC2', script: 'a9143841ca886a1c4276966a77a15d0d1c4fe1e841bd87', value: 350000000, confirmations: 121 }]; 
 
@@ -78,7 +72,6 @@ describe('V8', () => {
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
         userAgent: 'testAgent',
-        addressFormat: null,
         client: PartialJson,
       });
 
@@ -115,7 +108,6 @@ describe('V8', () => {
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
         userAgent: 'testAgent',
-        addressFormat: null,
         client: PartialJsonL,
       });
       be2.getTransactions(wallet, 0, (err, txs) => {
@@ -143,46 +135,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
-        network: 'livenet',
-        url: 'http://dummy/',
-        apiPrefix: 'dummyPath',
-        userAgent: 'testAgent',
-        client: PartialJson,
-      });
-
-      be.getAddressUtxos('1EU9VhWRN7aW38pGk7qj3c2EDcUGDZKESt', 15, (err, utxos) => {
-        should.not.exist(err);
-        should.exist(utxos);
-        let x = utxos[2];
-        x.confirmations.should.equal(0);
-        x.address.should.equal('qrua7vsdmks4522wwv8rtamfph7g8s8vpq6a0g3veh');
-        x.satoshis.should.equal(2000000);
-        x.amount.should.equal(x.satoshis/1e8);
-        x.scriptPubKey.should.equal('76a914f9df320ddda15a294e730e35f7690dfc83c0ec0888ac');
-        x.txid.should.equal('42eeb1d139521fa5206685ffec5df3b302cf85561201178680a0efe6bd23d449');
-        x.vout.should.equal(0);
-
-        utxos[1].confirmations.should.equal(1);
-        utxos[0].confirmations.should.equal(4);
-
-        return done();
-      });
-    });
-
-    it('should get uxtos 2', (done) => {
-
-
-      class PartialJson {
-        getAddressTxos(opts) {
-          return new Promise(function (resolve) {
-            resolve(V8UTXOS2);
-          })
-        };
-      };
-
-      var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -211,7 +164,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -235,7 +188,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -259,7 +212,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -293,7 +246,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -318,7 +271,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',
@@ -351,7 +304,7 @@ describe('V8', () => {
       };
 
       var be = new V8({
-        coin: 'bch',
+        coin: 'btc',
         network: 'livenet',
         url: 'http://dummy/',
         apiPrefix: 'dummyPath',

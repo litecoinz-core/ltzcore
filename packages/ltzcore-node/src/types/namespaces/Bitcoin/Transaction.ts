@@ -1,5 +1,5 @@
 export interface BitcoinAddress {
-  toString: (stripCash: boolean) => string;
+  toString: () => string;
 }
 export interface BitcoinScript {
   toBuffer: () => Buffer;

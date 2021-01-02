@@ -111,7 +111,7 @@ var sighash = function sighash(transaction, sighashType, inputNumber, scriptCode
  * @param {number} sighash
  * @param {number} inputIndex
  * @param {Script} subscript
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr'
+ * @param {String} signingMethod - method used to sign - 'ecdsa'
  * @return {Signature}
  */
 function sign(transaction, privateKey, sighashType, inputIndex, scriptCode, satoshisBuffer, signingMethod) {
@@ -137,7 +137,7 @@ function sign(transaction, privateKey, sighashType, inputIndex, scriptCode, sato
  * @param {PublicKey} publicKey
  * @param {number} inputIndex
  * @param {Script} subscript
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod - method used to sign - 'ecdsa' (future signing method)
  * @return {boolean}
  */
 function verify(transaction, signature, publicKey, inputIndex, scriptCode, satoshisBuffer, signingMethod) {

@@ -11,7 +11,6 @@ const errors = {
   DUST_AMOUNT: 'Amount below dust threshold',
   MORE_THAT_ONE_OUTPUT: 'This wallet supports transactions with only one output',
   INCORRECT_ADDRESS_NETWORK: 'Incorrect address network',
-  ONLY_CASHADDR: 'Only cashaddr wo prefix is allowed for outputs',
   INSUFFICIENT_FUNDS: 'Insufficient funds',
   INSUFFICIENT_FUNDS_FOR_FEE: 'Insufficient funds for fee',
   INVALID_ADDRESS: 'Invalid address',

@@ -29,7 +29,6 @@
   "license": "MIT",
   "dependencies": {
     "ltzcore-lib": "^8.23.1",
-    "ltzcore-lib-cash": "^8.23.1",
     "info": "0.0.6-beta.0"
   },
   "devDependencies": {

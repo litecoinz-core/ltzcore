@@ -11,8 +11,7 @@ log.debug = log.verbose;
 
 var Ltzcore = require('ltzcore-lib');
 var Ltzcore_ = {
-  btc: Ltzcore,
-  bch: require('ltzcore-lib-cash')
+  btc: Ltzcore
 };
 
 var Common = require('../../ts_build/lib/common');
@@ -65,7 +64,7 @@ describe('History', function() {
           helpers.stubFeeLevels({
             24: 10000,
           });
-          helpers.stubCheckData(blockchainExplorer, server, wallet.coin == 'bch', done);
+          helpers.stubCheckData(blockchainExplorer, server, done);
         });
       });
     });
@@ -86,7 +85,7 @@ describe('History', function() {
           helpers.stubFeeLevels({
             24: 10000,
           });
-          helpers.stubCheckData(blockchainExplorer, server, wallet.coin == 'bch', done);
+          helpers.stubCheckData(blockchainExplorer, server, done);
         });
       });
     });
@@ -727,7 +726,7 @@ describe('History', function() {
               ];
 
               helpers.stubHistory(null, null,txs);
-              helpers.stubCheckData(blockchainExplorer, server, wallet.coin == 'bch', () =>{
+              helpers.stubCheckData(blockchainExplorer, server, () =>{
 
               server.getTxHistory({
                 includeExtendedInfo: true,
@@ -825,7 +824,7 @@ describe('History', function() {
               ];
 
               helpers.stubHistory(null, null,txs);
-              helpers.stubCheckData(blockchainExplorer, server, wallet.coin == 'bch', () =>{
+              helpers.stubCheckData(blockchainExplorer, server, () =>{
 
               server.getTxHistory({}, function(err, txs) {
                 should.not.exist(err);

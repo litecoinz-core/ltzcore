@@ -23,7 +23,7 @@
           <ion-grid>
             <ion-row>
               <ion-col col-12 col-md class="allow-truncated-text">
-                <block-summary *ngIf="chainNetwork.chain === 'BTC' || chainNetwork.chain === 'BCH'" [block]="block" [chainNetwork]="chainNetwork"></block-summary>
+                <block-summary *ngIf="chainNetwork.chain === 'BTC'" [block]="block" [chainNetwork]="chainNetwork"></block-summary>
                 <ion-item>
                   Number of Transactions
                   <ion-note item-end>

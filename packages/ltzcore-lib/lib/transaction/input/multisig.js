@@ -168,7 +168,7 @@ MultiSigInput.prototype.isValidSignature = function(transaction, signature, sign
  * @param {Transaction} transaction
  * @param {Integer} inputIndex
  * @param {Input} input
- * @param {String} signingMethod - method used to sign - 'ecdsa' or 'schnorr' (future signing method)
+ * @param {String} signingMethod - method used to sign - 'ecdsa' (future signing method)
  * @returns {TransactionSignature[]}
  */
 MultiSigInput.normalizeSignatures = function(transaction, input, inputIndex, signatures, publicKeys, signingMethod) {

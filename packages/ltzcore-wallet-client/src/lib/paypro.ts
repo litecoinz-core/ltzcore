@@ -1,4 +1,4 @@
-import { LtzcoreLib, LtzcoreLibCash } from 'crypto-wallet-core';
+import { LtzcoreLib } from 'crypto-wallet-core';
 
 var $ = require('preconditions').singleton();
 const URL = require('url');
@@ -7,8 +7,7 @@ const superagent = require('superagent');
 const Ltzcore = LtzcoreLib;
 const Errors = require('./errors');
 var Ltzcore_ = {
-  btc: Ltzcore,
-  bch: LtzcoreLibCash
+  btc: Ltzcore
 };
 // const request = require('request');
 const JSON_PAYMENT_REQUEST_CONTENT_TYPE = 'application/payment-request';
