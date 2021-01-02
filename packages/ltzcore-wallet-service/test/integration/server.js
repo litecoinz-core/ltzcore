@@ -49,7 +49,6 @@ describe('Wallet service', function() {
   });
   beforeEach(function(done) {
     transport.level= 'error';
-    config.suspendedChains = [];
 
     // restore defaults, cp values
     _.each(_.keys(VanillaDefaults), (x) => { 
